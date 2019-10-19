@@ -1,12 +1,12 @@
-#include "M5Display.h"
+#include "L0Display.h"
 
 #define BLK_PWM_CHANNEL 7 // LEDC_CHANNEL_7
 
-M5Display::M5Display() : TFT_eSPI() {}
+L0Display::L0Display() : TFT_ILI93XX() {}
 
-void M5Display::begin() {
-  TFT_eSPI::begin();
-  setRotation(1);
+void L0Display::begin() {
+  TFT_ILI93XX::begin();
+  setRotation(3);
   fillScreen(0);
 
   // Init the back-light LED PWM
@@ -15,64 +15,64 @@ void M5Display::begin() {
   ledcWrite(BLK_PWM_CHANNEL, 80);
 }
 
-void M5Display::sleep() {
+void L0Display::sleep() {
   startWrite();
   writecommand(ILI9341_SLPIN); // Software reset
   endWrite();
 }
 
-void M5Display::wakeup() {
+void L0Display::wakeup() {
   startWrite();
   writecommand(ILI9341_SLPOUT);
   endWrite();
 }
 
-void M5Display::setBrightness(uint8_t brightness) {
+void L0Display::setBrightness(uint8_t brightness) {
   ledcWrite(BLK_PWM_CHANNEL, brightness);
 }
 
-void M5Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t *data) {
+void L0Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t *data) {
   bool swap = getSwapBytes();
   setSwapBytes(true);
   pushImage((int32_t)x0, (int32_t)y0, (uint32_t)w, (uint32_t)h, data);
   setSwapBytes(swap);
 }
 
-void M5Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, uint16_t *data) {
+void L0Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, uint16_t *data) {
   bool swap = getSwapBytes();  
   setSwapBytes(true);
   pushImage((int32_t)x0, (int32_t)y0, (uint32_t)w, (uint32_t)h, data);
   setSwapBytes(swap);
 }
 
-void M5Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t *data, uint16_t transparent) {
+void L0Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t *data, uint16_t transparent) {
   bool swap = getSwapBytes();
   setSwapBytes(true);
   pushImage((int32_t)x0, (int32_t)y0, (uint32_t)w, (uint32_t)h, data, transparent);
   setSwapBytes(swap);
 }
 
-void M5Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t *data) {
+void L0Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t *data) {
   bool swap = getSwapBytes();
   setSwapBytes(true);
   pushImage((int32_t)x0, (int32_t)y0, (uint32_t)w, (uint32_t)h, (const uint16_t*)data);
   setSwapBytes(swap);
 }
 
-void M5Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, uint8_t *data) {
+void L0Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, uint8_t *data) {
   bool swap = getSwapBytes();
   setSwapBytes(true);
   pushImage((int32_t)x0, (int32_t)y0, (uint32_t)w, (uint32_t)h, (uint16_t*)data);
   setSwapBytes(swap);
 }
 
-void M5Display::progressBar(int x, int y, int w, int h, uint8_t val) {
+void L0Display::progressBar(int x, int y, int w, int h, uint8_t val) {
   drawRect(x, y, w, h, 0x09F1);
   fillRect(x + 1, y + 1, w * (((float)val) / 100.0), h - 1, 0x09F1);
 }
 
 #include "utility/qrcode.h"
-void M5Display::qrcode(const char *string, uint16_t x, uint16_t y, uint8_t width, uint8_t version) {
+void L0Display::qrcode(const char *string, uint16_t x, uint16_t y, uint8_t width, uint8_t version) {
 
   // Create the QR code
   QRCode qrcode;
@@ -94,7 +94,7 @@ void M5Display::qrcode(const char *string, uint16_t x, uint16_t y, uint8_t width
   }
 }
 
-void M5Display::qrcode(const String &string, uint16_t x, uint16_t y, uint8_t width, uint8_t version) {
+void L0Display::qrcode(const String &string, uint16_t x, uint16_t y, uint8_t width, uint8_t version) {
   int16_t len = string.length() + 2;
   char buffer[len];
   string.toCharArray(buffer, len);
@@ -122,7 +122,7 @@ uint32_t read32(fs::File &f) {
 }
 
 // Bodmers BMP image rendering function
-void M5Display::drawBmpFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y) {
+void L0Display::drawBmpFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y) {
   if ((x >= width()) || (y >= height())) return;
 
   // Open requested file on SD card
@@ -180,7 +180,7 @@ void M5Display::drawBmpFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y
   bmpFS.close();
 }
 
-// void M5Display::drawBmp(fs::FS &fs, const char *path, uint16_t x, uint16_t y) {
+// void L0Display::drawBmp(fs::FS &fs, const char *path, uint16_t x, uint16_t y) {
 //   drawBmpFile(fs, path, x, y);
 // }
 /***************************************************
@@ -225,7 +225,7 @@ typedef struct {
   const void *src;
   size_t len;
   size_t index;
-  M5Display *tft;
+  L0Display *tft;
   uint16_t outWidth;
   uint16_t outHeight;
 } jpg_file_decoder_t;
@@ -358,7 +358,7 @@ static bool jpgDecode(jpg_file_decoder_t *jpeg,
   return true;
 }
 
-void M5Display::drawJpg(const uint8_t *jpg_data, size_t jpg_len, uint16_t x,
+void L0Display::drawJpg(const uint8_t *jpg_data, size_t jpg_len, uint16_t x,
                         uint16_t y, uint16_t maxWidth, uint16_t maxHeight,
                         uint16_t offX, uint16_t offY, jpeg_div_t scale) {
   if ((x + maxWidth) > width() || (y + maxHeight) > height()) {
@@ -390,7 +390,7 @@ void M5Display::drawJpg(const uint8_t *jpg_data, size_t jpg_len, uint16_t x,
   jpgDecode(&jpeg, jpgRead);
 }
 
-void M5Display::drawJpgFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y,
+void L0Display::drawJpgFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y,
                             uint16_t maxWidth, uint16_t maxHeight, uint16_t offX,
                             uint16_t offY, jpeg_div_t scale) {
   if ((x + maxWidth) > width() || (y + maxHeight) > height()) {
@@ -436,7 +436,6 @@ void M5Display::drawJpgFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y
  */
 
 #include "utility/pngle.h"
-#include <HTTPClient.h>
 
 typedef struct _png_draw_params {
   uint16_t x;
@@ -448,7 +447,7 @@ typedef struct _png_draw_params {
   double scale;
   uint8_t alphaThreshold;
 
-  M5Display *tft;
+  L0Display *tft;
 } png_file_decoder_t;
 
 static void pngle_draw_callback(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4])
@@ -483,7 +482,7 @@ static void pngle_draw_callback(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t
   }
 }
 
-void M5Display::drawPngFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y,
+void L0Display::drawPngFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y,
                             uint16_t maxWidth, uint16_t maxHeight, uint16_t offX,
                             uint16_t offY, double scale, uint8_t alphaThreshold)
 {
@@ -534,76 +533,4 @@ void M5Display::drawPngFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y
 
   pngle_destroy(pngle);
   file.close();
-}
-
-void M5Display::drawPngUrl(const char *url, uint16_t x, uint16_t y,
-                            uint16_t maxWidth, uint16_t maxHeight, uint16_t offX,
-                            uint16_t offY, double scale, uint8_t alphaThreshold)
-{
-  HTTPClient http;
-
-  if (WiFi.status() != WL_CONNECTED) {
-    log_e("Not connected");
-    return ;
-  }
-
-  http.begin(url);
-
-  int httpCode = http.GET();
-  if (httpCode != HTTP_CODE_OK) {
-    log_e("HTTP ERROR: %d\n", httpCode);
-    http.end();
-    return ;
-  }
-
-  WiFiClient *stream = http.getStreamPtr();
-
-  pngle_t *pngle = pngle_new();
-
-  png_file_decoder_t png;
-
-  if (!maxWidth) {
-    maxWidth = width() - x;
-  }
-  if (!maxHeight) {
-    maxHeight = height() - y;
-  }
-
-
-  png.x = x;
-  png.y = y;
-  png.maxWidth = maxWidth;
-  png.maxHeight = maxHeight;
-  png.offX = offX;
-  png.offY = offY;
-  png.scale = scale;
-  png.alphaThreshold = alphaThreshold;
-  png.tft = this;
-
-  pngle_set_user_data(pngle, &png);
-  pngle_set_draw_callback(pngle, pngle_draw_callback);
-
-  // Feed data to pngle
-  uint8_t buf[1024];
-  int remain = 0;
-  int len;
-  while (http.connected()) {
-    size_t size = stream->available();
-    if (!size) { delay(1); continue; }
-
-    if (size > sizeof(buf) - remain) size = sizeof(buf) - remain;
-    if ((len = stream->readBytes(buf + remain, size)) > 0) {
-      int fed = pngle_feed(pngle, buf, remain + len);
-      if (fed < 0) {
-        log_e("[pngle error] %s", pngle_error(pngle));
-        break;
-      }
-
-      remain = remain + len - fed;
-      if (remain > 0) memmove(buf, buf + fed, remain);
-    }
-  }
-
-  pngle_destroy(pngle);
-  http.end();
 }

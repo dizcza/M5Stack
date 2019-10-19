@@ -14,11 +14,10 @@
  ****************************************************/
 
 
-#include "In_eSPI.h"
+#include "In_TFT.h"
 
-#ifndef ESP32_PARALLEL
-  #include <SPI.h>
-#endif
+#include <SPI.h>
+
 
 #if defined (ESP32)
   #if !defined (ESP32_PARALLEL)

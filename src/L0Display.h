@@ -1,10 +1,10 @@
-#ifndef _M5DISPLAY_H_
-  #define _M5DISPLAY_H_
+#ifndef _L0DISPLAY_H_
+  #define _L0DISPLAY_H_
 
   #include <Arduino.h>
   #include <FS.h>
   #include <SPI.h>
-  #include "utility/In_eSPI.h"
+  #include <TFT_ILI93XX.h> 
   #include "utility/Sprite.h"
 
   typedef enum {
@@ -15,42 +15,48 @@
     JPEG_DIV_MAX
   } jpeg_div_t;
 
-  class M5Display : public TFT_eSPI {
+  class L0Display : public TFT_ILI93XX {
     public:
-      M5Display();
+      L0Display();
       void begin();
       void sleep();
       void wakeup();
       void setBrightness(uint8_t brightness);
+      void clearScreen(uint32_t color=ILI9341_BLACK) { fillScreen(color); }      
       void clearDisplay(uint32_t color=ILI9341_BLACK) { fillScreen(color); }
       void clear(uint32_t color=ILI9341_BLACK) { fillScreen(color); }
       void display() {}
 
       inline void startWrite(void){
-        #if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(ESP32_PARALLEL)
+        #if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS)
           if (locked) {
-            locked = false; SPI.beginTransaction(SPISettings(SPI_FREQUENCY, MSBFIRST, SPI_MODE0));
+            locked = false; 
+            SPI1.beginTransaction(SPISettings(SPI_FREQUENCY, MSBFIRST, SPI_MODE0));
           }
         #endif
         CS_L;
       }
+      
       inline void endWrite(void){
-        #if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(ESP32_PARALLEL)
+        #if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS)
           if(!inTransaction) {
             if (!locked) {
               locked = true; 
-              SPI.endTransaction();
+              SPI1.endTransaction();
             }
           }
         #endif
         CS_H;
       }
+      
       inline void writePixel(uint16_t color) {
-        SPI.write16(color);
+        SPI1.write16(color);
       }
+      
       inline void writePixels(uint16_t * colors, uint32_t len){
-        SPI.writePixels((uint8_t*)colors , len * 2);
+        SPI1.writePixels((uint8_t*)colors , len * 2);
       }
+
       void progressBar(int x, int y, int w, int h, uint8_t val);
 
       #define setFont setFreeFont
@@ -83,11 +89,6 @@
                     jpeg_div_t scale = JPEG_DIV_NONE);
 
       void drawPngFile(fs::FS &fs, const char *path, uint16_t x = 0, uint16_t y = 0,
-                    uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                    uint16_t offX = 0, uint16_t offY = 0,
-                    double scale = 1.0, uint8_t alphaThreshold = 127);
-
-      void drawPngUrl(const char *url, uint16_t x = 0, uint16_t y = 0,
                     uint16_t maxWidth = 0, uint16_t maxHeight = 0,
                     uint16_t offX = 0, uint16_t offY = 0,
                     double scale = 1.0, uint8_t alphaThreshold = 127);

@@ -1,1 +1,1 @@
-#define M5_LIB_VERSION F("0.2.3-dirty")
+#define L0_LIB_VERSION F("0.3.2")

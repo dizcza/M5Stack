@@ -12,16 +12,14 @@
  ****************************************************/
 
 // Stop fonts etc being loaded multiple times
-#ifndef _In_eSPIH_
-#define _In_eSPIH_
+#ifndef _In_TFTH_
+#define _In_TFTH_
 
 #define TFT_ESPI_VERSION "1.4.5"
 
-//#define ESP32 //Just used to test ESP32 options
-
 // Include header file that defines the fonts loaded, the TFT drivers
 // available and the pins to be used
-#include "In_eSPI_Setup.h"
+#include "In_TFT_Setup.h"
 
 #ifndef TAB_COLOUR
   #define TAB_COLOUR 0
@@ -872,10 +870,6 @@ class TFT_eSPI : public Print {
 
   uint32_t cspinmask, dcpinmask, wrpinmask, sclkpinmask;
 
-#if defined(ESP32_PARALLEL)
-  uint32_t  xclr_mask, xdir_mask, xset_mask[256];
-#endif
-
   uint32_t lastColor = 0xFFFF;
 
 
@@ -905,11 +899,6 @@ class TFT_eSPI : public Print {
 
 #ifdef LOAD_GFXFF
   GFXfont  *gfxFont;
-#endif
-
-// Load the Touch extension
-#ifdef TOUCH_CS
-  #include "Extensions/Touch.h"
 #endif
 
 // Load the Anti-aliased font extension
@@ -967,12 +956,6 @@ fontMetrics gFont = { 0, 0, 0, 0, 0, 0, 0 };
   bool     spiffs = true;
 #endif
 
-}; // End of class TFT_eSPI
-
-// Load the Button Class
-// #include "Extensions/Button.h"
-
-// Load the Sprite Class
-// #include "Extensions/Sprite.h"
+}; // End of class _In_TFTH_
 
 #endif
