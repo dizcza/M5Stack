@@ -15,7 +15,7 @@
 #ifndef _In_TFTH_
 #define _In_TFTH_
 
-#define TFT_ESPI_VERSION "1.4.5"
+#define TFT_ESPI_VERSION "1.4.16"
 
 // Include header file that defines the fonts loaded, the TFT drivers
 // available and the pins to be used
@@ -98,10 +98,17 @@
 
 #include <Arduino.h>
 #include <Print.h>
-
-#include <pgmspace.h>
-
 #include <SPI.h>
+
+#if defined (ARDUINO_ARCH_STM32L0)
+  #include <pgmspace.h>
+  #define _FORCE_PROGMEM__
+  #ifndef USE_SPI
+    #define SPI_PORT SPI1
+  #else
+    #define SPI_PORT SPI
+  #endif
+#endif
 
 #ifdef ESP32
   #include "soc/spi_reg.h"
@@ -127,6 +134,9 @@
   #define DC_D // No macro allocated so it generates no code
 #else
   #if defined (ESP8266) && (TFT_DC == 16)
+    #define DC_C digitalWrite(TFT_DC, LOW)
+    #define DC_D digitalWrite(TFT_DC, HIGH)
+  #elif defined (ARDUINO_ARCH_STM32L0)
     #define DC_C digitalWrite(TFT_DC, LOW)
     #define DC_D digitalWrite(TFT_DC, HIGH)
   #elif defined (ESP32)
@@ -186,6 +196,9 @@
   #if defined (ESP8266) && (TFT_CS == 16)
     #define CS_L digitalWrite(TFT_CS, LOW)
     #define CS_H digitalWrite(TFT_CS, HIGH)
+  #elif defined (ARDUINO_ARCH_STM32L0)
+    #define CS_L digitalWrite(TFT_CS, LOW)
+    #define CS_H digitalWrite(TFT_CS, HIGH)  
   #elif defined (ESP32)
     #if defined (ESP32_PARALLEL)
       #define CS_L // The TFT CS is set permanently low during init()
@@ -238,7 +251,7 @@
   #else
     #define CS_L_DC_C CS_L; DC_C
   #endif
-#else // ESP8266
+#else // ESP8266 || STM32L0
   #define CS_L_DC_C CS_L; DC_C
 #endif
 
@@ -256,13 +269,16 @@
   #if defined (ESP32)
     #define WR_L GPIO.out_w1tc = (1 << TFT_WR)
     #define WR_H GPIO.out_w1ts = (1 << TFT_WR)
+  #elif defined (ARDUINO_ARCH_STM32L0)
+    #define WR_L digitalWrite(TFT_WR, LOW)
+    #define WR_H digitalWrite(TFT_WR, HIGH)    
   #else
     #define WR_L GPOC=wrpinmask
     #define WR_H GPOS=wrpinmask
   #endif
 #endif
 
-#ifdef ESP8266
+#if defined (ESP8266) || defined (ARDUINO_ARCH_STM32L0)
   // Concatenate two 16 bit values for the SPI 32 bit register write
   #define SPI_32(H,L) ( (H)<<16 | (L) )
   #define COL_32(H,L) ( (H)<<16 | (L) )
@@ -332,7 +348,7 @@
 
   // Convert swapped byte 16 bit colour to 18 bit and write in 3 bytes
   #define tft_Write_16S(C) spi.transfer(C & 0xF8); \
-                           spi.transfer((C & 0xE0)>>11 | (C & 0x07)<<5); \
+                           spi.transfer((C & 0xE000)>>11 | (C & 0x07)<<5); \
                            spi.transfer((C & 0x1F00)>>5)
   // Write 32 bits to TFT
   #define tft_Write_32(C)  spi.write32(C)
@@ -344,11 +360,17 @@
   #define tft_Write_16S(C) spi.write16(C<<8 | C>>8)
   #define tft_Write_32(C)  spi.write32(C)
 
-#elif defined ESP8266
+#elif defined (ESP8266)
 
   #define tft_Write_8(C)   spi.write(C)
   #define tft_Write_16(C)  spi.write16(C)
   #define tft_Write_32(C)  spi.write32(C)
+
+#elif defined (ARDUINO_ARCH_STM32L0)
+
+  #define tft_Write_8(C)   SPI_PORT.transfer(C)
+  #define tft_Write_16(C)  SPI_PORT.transfer16(C)
+  #define tft_Write_32(C)  SPI_PORT.transfer32(C)
 
 #else // ESP32 using SPI with 16 bit color display
 
@@ -393,6 +415,8 @@
     // Use a bit banged function call for ESP8266 and bi-directional SDA pin
     #define SCLK_L GPOC=sclkpinmask
     #define SCLK_H GPOS=sclkpinmask
+  #elif defined (ARDUINO_ARCH_STM32L0) && defined (TFT_SDA_READ)
+    #define tft_Read_8() SPI_PORT.transfer(0)
   #else
     // Use a SPI read transfer
     #define tft_Read_8() spi.transfer(0)
@@ -869,6 +893,10 @@ class TFT_eSPI : public Print {
   volatile uint32_t *dcport, *csport;
 
   uint32_t cspinmask, dcpinmask, wrpinmask, sclkpinmask;
+
+#if defined(ESP32_PARALLEL)
+  uint32_t  xclr_mask, xdir_mask, xset_mask[256];
+#endif
 
   uint32_t lastColor = 0xFFFF;
 

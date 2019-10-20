@@ -3,11 +3,19 @@
 #ifndef FONT5X7_H
 #define FONT5X7_H
 
-#include <pgmspace.h>
+#if !defined (ARDUINO_ARCH_STM32L0)
+  #include <pgmspace.h>
+#else
+  #include <stdint.h>
+#endif // !defined (ARDUINO_ARCH_STM32L0)
 
 // Standard ASCII 5x7 font
 
-static const unsigned char font[] PROGMEM = {
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+static const unsigned char font[] =
+{
 	0x00, 0x00, 0x00, 0x00, 0x00,
 	0x3E, 0x5B, 0x4F, 0x5B, 0x3E,
 	0x3E, 0x6B, 0x4F, 0x6B, 0x3E,

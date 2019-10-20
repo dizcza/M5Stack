@@ -26,7 +26,10 @@
 //#define ILI9486_DRIVER
 //#define ILI9488_DRIVER     // WARNING: Do not connect ILI9488 display SDO to MISO if other devices share the SPI bus (TFT SDO does NOT tristate when CS is high)
 //#define ST7789_DRIVER      // Define additional parameters below for this display
+//#define ST7789_2_DRIVER    // Minimal configuration option, define additional parameters below for this display
 //#define R61581_DRIVER
+//#define RM68140_DRIVER
+
 #include "ILI9341_Defines.h"
 #define  TFT_DRIVER 0x9341
 
@@ -43,8 +46,10 @@
 //  #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
 
 // For M5Stack ESP32 module with integrated ILI9341 display ONLY, remove // in line below
+//#define M5STACK
 
-#define M5STACK
+// For L0Stack for STM32L0 boards with ILI9341 display ONLY, remove // in line below
+#define L0STACK
 
 // For ST7789, ST7735 and ILI9163 ONLY, define the pixel width and height in portrait orientation
 // #define TFT_WIDTH  80
@@ -169,18 +174,18 @@
 
 //#define TFT_BL   32  // LED back-light (only for ST7789 with backlight control pin)
 
-//#define TOUCH_CS 21     // Chip select pin (T_CS) of touch screen
+//#define TOUCH_CS 21  // Chip select pin (T_CS) of touch screen
 
-//#define TFT_WR 22    // Write strobe for modified Raspberry Pi TFT only
+//#define TFT_WR   22  // Write strobe for modified Raspberry Pi TFT only
 
 // For the M5Stack module use these #define lines
-#define TFT_MISO 19
-#define TFT_MOSI 23
-#define TFT_SCLK 18
-#define TFT_CS   14  // Chip select control pin
-#define TFT_DC   27  // Data Command control pin
-#define TFT_RST  33  // Reset pin (could connect to Arduino RESET pin)
-#define TFT_BL   32  // LED back-light (required for M5Stack)
+//#define TFT_MISO 19
+//#define TFT_MOSI 23
+//#define TFT_SCLK 18
+//#define TFT_CS   14  // Chip select control pin
+//#define TFT_DC   27  // Data Command control pin
+//#define TFT_RST  33  // Reset pin (could connect to Arduino RESET pin)
+//#define TFT_BL   32  // LED back-light (required for M5Stack)
 
 // ######       EDIT THE PINs BELOW TO SUIT YOUR ESP32 PARALLEL TFT SETUP        ######
 
@@ -212,6 +217,19 @@
 //#define TFT_D7   14
 
 
+// ###### EDIT THE PIN NUMBERS IN THE LINES FOLLOWING TO SUIT YOUR STM32L0 SETUP   ######
+
+// For Murata based boards (only tested with ILI9341 display) and L0Stack module
+// The hardware SPI1 will be used
+
+#define TFT_DC   9   // Data Command control pin
+#define TFT_CS   10  // Chip select control pin
+#define TFT_RST  -1  // Set TFT_RST to -1 if display RESET is connected to STM32L0 board RST
+//#define TFT_BL   4  // LED back-light (only for board with MOSFET in front of backlight control pin)
+
+//#define TOUCH_CS 6     // Chip select pin (T_CS) of touch screen
+
+
 // ##################################################################################
 //
 // Section 3. Define the fonts that are to be used here
@@ -232,9 +250,11 @@
 //#define LOAD_FONT8N // Font 8. Alternative to Font 8 above, slightly narrower, so 3 digits fit a 160 pixel TFT
 #define LOAD_GFXFF  // FreeFonts. Include access to the 48 Adafruit_GFX free fonts FF1 to FF48 and custom fonts
 
-// Comment out the #define below to stop the SPIFFS filing system and smooth font code being loaded
-// this will save ~20kbytes of FLASH
-#define SMOOTH_FONT
+#if !defined (ARDUINO_ARCH_STM32L0)
+  // Comment out the #define below to stop the SPIFFS filing system and smooth font code being loaded
+  // this will save ~20kbytes of FLASH
+  #define SMOOTH_FONT
+#endif // !defined (ARDUINO_ARCH_STM32L0)
 
 
 // ##################################################################################
@@ -243,6 +263,7 @@
 //
 // ##################################################################################
 
+#if !defined (ARDUINO_ARCH_STM32L0)
 // Define the SPI clock frequency, this affects the graphics rendering speed. Too
 // fast and the TFT driver will not keep up and display corruption appears.
 // With an ILI9341 display 40MHz works OK, 80MHz sometimes fails
@@ -254,15 +275,12 @@
 // #define SPI_FREQUENCY   5000000
 // #define SPI_FREQUENCY  10000000
 // #define SPI_FREQUENCY  20000000
-// #define SPI_FREQUENCY  27000000 // Actually sets it to 26.67MHz = 80/3
-#define SPI_FREQUENCY  40000000 // Maximum to use SPIFFS
+#define SPI_FREQUENCY  27000000 // Actually sets it to 26.67MHz = 80/3
+// #define SPI_FREQUENCY  40000000 // Maximum to use SPIFFS
 // #define SPI_FREQUENCY  80000000
 
 // Optional reduced SPI frequency for reading TFT
-// #define SPI_READ_FREQUENCY  20000000
-
-// The XPT2046 requires a lower SPI clock rate of 2.5MHz so we define that here:
-// #define SPI_TOUCH_FREQUENCY  2500000
+#define SPI_READ_FREQUENCY  20000000
 
 // The ESP32 has 2 free SPI ports i.e. VSPI and HSPI, the VSPI is the default.
 // If the VSPI port is in use and pins are not accessible (e.g. TTGO T-Beam)
@@ -280,3 +298,7 @@
 // so changing it here has no effect
 
 // #define SUPPORT_TRANSACTIONS
+#endif // !defined (ARDUINO_ARCH_STM32L0)
+
+// The XPT2046 requires a lower SPI clock rate of 2.5MHz so we define that here:
+#define SPI_TOUCH_FREQUENCY  2500000

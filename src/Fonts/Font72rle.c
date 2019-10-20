@@ -6,10 +6,17 @@
 // This font only contains characters [space] 0 1 2 3 4 5 6 7 8 9 0 : - .
 // All other characters print as a space
 
-#include <pgmspace.h>
+#if !defined (ARDUINO_ARCH_STM32L0)
+  #include <pgmspace.h>
+#else
+  #include <stdint.h>
+#endif // !defined (ARDUINO_ARCH_STM32L0)
 
 
-PROGMEM const unsigned char widtbl_f72[96] =          // character width table
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char widtbl_f72[96] =          // character width table
 {
         29, 29, 29, 29, 29, 29, 29, 29,     // char 32 - 39
         29, 29, 29, 29, 29, 29, 29, 29,     // char 40 - 47
@@ -27,14 +34,20 @@ PROGMEM const unsigned char widtbl_f72[96] =          // character width table
 
 // Row format, MSB left
 
-PROGMEM const unsigned char chr_f72_20[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_20[] = 
 {
 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 
 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 
 0x7E
 };
 
-PROGMEM const unsigned char chr_f72_2D[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_2D[] = 
 {
 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F,
 0x36, 0x91, 0x0A, 0x91, 0x0A, 0x91, 0x0A, 0x91,
@@ -42,7 +55,10 @@ PROGMEM const unsigned char chr_f72_2D[] =
 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x07
 };
 
-PROGMEM const unsigned char chr_f72_2E[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_2E[] = 
 {
 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 
 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x48, 0x88, 
@@ -51,7 +67,10 @@ PROGMEM const unsigned char chr_f72_2E[] =
 0x44
 };
 
-PROGMEM const unsigned char chr_f72_30[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_30[] = 
 {
 0x7F, 0x70, 0x8A, 0x28, 0x90, 0x23, 0x94, 0x1F, 
 0x98, 0x1C, 0x9A, 0x1A, 0x9C, 0x18, 0x9E, 0x16, 
@@ -87,7 +106,10 @@ PROGMEM const unsigned char chr_f72_30[] =
 0x8A, 0x4D
 };
 
-PROGMEM const unsigned char chr_f72_31[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_31[] = 
 {
 0x7F, 0x78, 0x85, 0x2F, 0x86, 0x2F, 0x86, 0x2E, 
 0x87, 0x2D, 0x88, 0x2D, 0x88, 0x2C, 0x89, 0x2B, 
@@ -111,7 +133,10 @@ PROGMEM const unsigned char chr_f72_31[] =
 0x88, 0x2D, 0x88, 0x2D, 0x88, 0x7F, 0x1
 };
 
-PROGMEM const unsigned char chr_f72_32[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_32[] = 
 {
 0x7F, 0x6F, 0x8A, 0x27, 0x92, 0x21, 0x96, 0x1D, 
 0x9A, 0x1A, 0x9C, 0x18, 0x9E, 0x16, 0xA0, 0x14, 
@@ -136,7 +161,10 @@ PROGMEM const unsigned char chr_f72_32[] =
 0xAC, 0x09, 0xAC, 0x74
 };
 
-PROGMEM const unsigned char chr_f72_33[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_33[] = 
 {
 0x7F, 0x6F, 0x89, 0x29, 0x90, 0x23, 0x94, 0x1F, 
 0x97, 0x1D, 0x9A, 0x1A, 0x9C, 0x18, 0x9E, 0x16, 
@@ -164,7 +192,10 @@ PROGMEM const unsigned char chr_f72_33[] =
 0x95, 0x22, 0x91, 0x28, 0x89, 0x4E
 };
 
-PROGMEM const unsigned char chr_f72_34[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_34[] = 
 {
 0x7F, 0x7F, 0x34, 0x86, 0x2E, 0x87, 0x2D, 0x88, 
 0x2C, 0x89, 0x2C, 0x89, 0x2B, 0x8A, 0x2A, 0x8B, 
@@ -192,7 +223,10 @@ PROGMEM const unsigned char chr_f72_34[] =
 0x2D, 0x88, 0x2D, 0x88, 0x7B
 };
 
-PROGMEM const unsigned char chr_f72_35[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_35[] = 
 {
 0x7F, 0x7F, 0x1E, 0xA0, 0x15, 0xA0, 0x14, 0xA1, 
 0x14, 0xA1, 0x14, 0xA1, 0x14, 0xA1, 0x14, 0xA1, 
@@ -220,7 +254,10 @@ PROGMEM const unsigned char chr_f72_35[] =
 0x4E
 };
 
-PROGMEM const unsigned char chr_f72_36[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_36[] = 
 {
 0x7F, 0x72, 0x89, 0x28, 0x90, 0x23, 0x95, 0x1E, 
 0x98, 0x1C, 0x9A, 0x1A, 0x9C, 0x18, 0x9E, 0x16, 
@@ -254,7 +291,10 @@ PROGMEM const unsigned char chr_f72_36[] =
 0x97, 0x1F, 0x95, 0x23, 0x8F, 0x29, 0x89, 0x4D
 };
 
-PROGMEM const unsigned char chr_f72_37[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_37[] = 
 {
 0x7F, 0x7F, 0x17, 0xAB, 0x0A, 0xAB, 0x0A, 0xAB, 
 0x0A, 0xAB, 0x0A, 0xAB, 0x0A, 0xAB, 0x0A, 0xAB, 
@@ -276,7 +316,10 @@ PROGMEM const unsigned char chr_f72_37[] =
 0x2D, 0x88, 0x7F, 0xC
 };
 
-PROGMEM const unsigned char chr_f72_38[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_38[] = 
 {
 0x7F, 0x70, 0x89, 0x28, 0x91, 0x22, 0x95, 0x1E, 
 0x99, 0x1B, 0x9B, 0x19, 0x9D, 0x17, 0x9F, 0x15, 
@@ -310,7 +353,10 @@ PROGMEM const unsigned char chr_f72_38[] =
 0x89, 0x4E
 };
 
-PROGMEM const unsigned char chr_f72_39[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_39[] = 
 {
 0x7F, 0x70, 0x88, 0x29, 0x90, 0x23, 0x94, 0x20, 
 0x97, 0x1C, 0x9A, 0x1A, 0x9C, 0x18, 0x9E, 0x16, 
@@ -344,7 +390,10 @@ PROGMEM const unsigned char chr_f72_39[] =
 0x97, 0x1F, 0x94, 0x23, 0x90, 0x28, 0x89, 0x50
 };
 
-PROGMEM const unsigned char chr_f72_3A[] = 
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char chr_f72_3A[] = 
 {
 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x23, 0x88, 0x13, 
 0x88, 0x13, 0x88, 0x13, 0x88, 0x13, 0x88, 0x13, 
@@ -354,7 +403,10 @@ PROGMEM const unsigned char chr_f72_3A[] =
 0x13, 0x88, 0x13, 0x88, 0x13, 0x88, 0x13, 0x88, 
 0x44
 };
-PROGMEM const unsigned char * const chrtbl_f72[96] =        // character pointer table
+#if defined(_FORCE_PROGMEM__) 
+PROGMEM 
+#endif
+const unsigned char * const chrtbl_f72[96] =        // character pointer table
 {
         chr_f72_20, chr_f72_20, chr_f72_20, chr_f72_20, chr_f72_20, chr_f72_20, chr_f72_20, chr_f72_20, 
         chr_f72_20, chr_f72_20, chr_f72_20, chr_f72_20, chr_f72_20, chr_f72_2D, chr_f72_2E, chr_f72_20, 
