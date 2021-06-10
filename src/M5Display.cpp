@@ -2,33 +2,61 @@
 
 #define BLK_PWM_CHANNEL 7 // LEDC_CHANNEL_7
 
-M5Display::M5Display() : TFT_eSPI() {}
+#if defined (ARDUINO_M5Stick_C) || defined (ARDUINO_M5STACK_Core2)
+  #include "drivers/M5x/AXP192/AXP192.h"
+#endif
+#if defined (ARDUINO_ESP32_DEV) || defined (ARDUINO_D1_MINI32)	//M35, K36
+  #include "drivers/M35/MAX7315/MAX7315.h"
+#endif
+
+#ifdef CST_INT
+  #include "drivers/M5x/M5Touch/M5Touch.h"
+#endif
+
+// So we can use this instance without including all of M5Core2 / M5Stack
+M5Display* M5Display::instance;
+
+M5Display::M5Display() : TFT_eSPI() {
+  if (!instance) instance = this;
+}
 
 void M5Display::begin() {
   TFT_eSPI::begin();
-  setRotation(1);
+  setRotation(DEFAULT_ROTATION);
   fillScreen(0);
-
-  // Init the back-light LED PWM
-  ledcSetup(BLK_PWM_CHANNEL, 44100, 8);
-  ledcAttachPin(TFT_BL, BLK_PWM_CHANNEL);
-  ledcWrite(BLK_PWM_CHANNEL, 80);
+  #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
+    // Init the back-light LED PWM
+    ledcSetup(BLK_PWM_CHANNEL, 44100, 8);
+    ledcAttachPin(TFT_BL, BLK_PWM_CHANNEL);
+  #endif
+  setBrightness(200);
 }
 
 void M5Display::sleep() {
   startWrite();
-  writecommand(ILI9341_SLPIN); // Software reset
+  writecommand(TFT_SLPIN); // Software reset
   endWrite();
 }
 
 void M5Display::wakeup() {
   startWrite();
-  writecommand(ILI9341_SLPOUT);
+  writecommand(TFT_SLPOUT);
   endWrite();
 }
 
+// M5Stack compatible range 0-255
 void M5Display::setBrightness(uint8_t brightness) {
-  ledcWrite(BLK_PWM_CHANNEL, brightness);
+  #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
+    ledcWrite(BLK_PWM_CHANNEL, brightness); // brightness 0-255
+  #elif defined (ARDUINO_M5STACK_Core2)
+    //AXP->SetLcdVoltage(brightness * 80 + 2500); //For M5ez
+    AXP->SetLcdVoltage(brightness * 3 + 2530);  // brightness 0-255
+  #elif defined (ARDUINO_M5Stick_C)
+    //AXP->ScreenBreath(brightness * 10 / 13 + 7);  // brightness in % for 7 to 15 LDO Vvalue
+    AXP->ScreenBreath((brightness >> 5) + 7);  // brightness 0-255
+  #elif defined (ARDUINO_ESP32_DEV) || defined (ARDUINO_D1_MINI32)  //M35 or K36
+    IOE->setLcdBrightness(brightness, LOW);
+  #endif
 }
 
 void M5Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t *data) {
@@ -39,7 +67,7 @@ void M5Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const u
 }
 
 void M5Display::drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, uint16_t *data) {
-  bool swap = getSwapBytes();  
+  bool swap = getSwapBytes();
   setSwapBytes(true);
   pushImage((int32_t)x0, (int32_t)y0, (uint32_t)w, (uint32_t)h, data);
   setSwapBytes(swap);
@@ -607,3 +635,71 @@ void M5Display::drawPngUrl(const char *url, uint16_t x, uint16_t y,
   pngle_destroy(pngle);
   http.end();
 }
+
+
+// Saves and restores font properties, datum, cursor, colors
+
+void M5Display::pushState() {
+  DisplayState s;
+  s.textfont = textfont;
+  s.textsize = textsize;
+  s.textcolor = textcolor;
+  s.textbgcolor = textbgcolor;
+  s.cursor_x = cursor_x;
+  s.cursor_y = cursor_y;
+  s.padX = padX;
+  s.gfxFont = gfxFont;
+  _displayStateStack.push_back(s);
+}
+
+void M5Display::popState() {
+  if (_displayStateStack.empty()) return;
+  DisplayState s = _displayStateStack.back();
+  _displayStateStack.pop_back();
+  textfont = s.textfont;
+  textsize = s.textsize;
+  textcolor = s.textcolor;
+  textbgcolor = s.textbgcolor;
+  cursor_x = s.cursor_x;
+  cursor_y = s.cursor_y;
+  padX = s.padX;
+  if (s.gfxFont && s.gfxFont != gfxFont) setFreeFont(s.gfxFont);
+}
+
+#ifdef CST_INT
+
+  #ifdef TFT_eSPI_TOUCH_EMULATION
+
+    // Emulates the native (resistive) TFT_eSPI touch interface using M5.Touch
+
+    uint8_t M5Display::getTouchRaw(uint16_t *x, uint16_t *y) {
+      return getTouch(x, y);
+    }
+
+    uint16_t M5Display::getTouchRawZ(void) {
+      return (TOUCH->ispressed()) ? 1000 : 0;
+    }
+
+    void M5Display::convertRawXY(uint16_t *x, uint16_t *y) { return; }
+
+    uint8_t M5Display::getTouch(uint16_t *x, uint16_t *y,
+                                uint16_t threshold /* = 600 */) {
+      TOUCH->read();
+      if (TOUCH->points) {
+        *x = TOUCH->point[0].x;
+        *y = TOUCH->point[0].y;
+        return true;
+      }
+      return false;
+    }
+
+    void M5Display::calibrateTouch(uint16_t *data, uint32_t color_fg,
+                                  uint32_t color_bg, uint8_t size) {
+      return;
+    }
+
+    void M5Display::setTouch(uint16_t *data) { return; }
+
+  #endif /* TFT_eSPI_TOUCH_EMULATION */
+
+#endif /* CST_INT */

@@ -19,7 +19,7 @@ https://github.com/m5stack/M5Stack/tree/master/examples
 
 ## 3. API 参考
 
-https://github.com/m5stack/M5Stack/blob/master/src/M5Stack.h#L19
+https://github.com/m5stack/M5Stack/blob/master/src/M5StX.h#L19
 
 https://docs.m5stack.com/#/zh_CN/api
 

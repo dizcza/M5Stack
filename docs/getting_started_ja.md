@@ -23,7 +23,7 @@ https://github.com/m5stack/M5Stack/tree/master/examples
 
 ## 3. 関数リファレンス（API仕様）
 
-https://github.com/m5stack/M5Stack/blob/master/src/M5Stack.h#L19
+https://github.com/m5stack/M5Stack/blob/master/src/M5StX.h#L19
 
 https://docs.m5stack.com/#/ja/api
 
