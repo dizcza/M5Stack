@@ -1,6 +1,16 @@
 # M5StX Library for M5Stack, M5StickC+, M5Core2 and your own derivatives
 
-Forked to unify API for M5ez library
+## This fork diffs
+
+* Unified M5Stack-compatible stack for M5Stack, M5Core2, M5Stick and custom devices
+* Made to run my own M5ez-based projects on suitable devices
+* No full compatibility intended, tested but all native libraries included
+* TFT_eSPI updated to 2.3.64 with M5FontCreator support
+* Some Cyrillic fonts added 
+* Unified backlight, battery charging and power off functions on all devices
+* M5Button for M5Core2-like devices with touchscreen
+* ezSound instead of Speaker lib
+
 
 ## 1. Get Started
 

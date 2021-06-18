@@ -44,7 +44,8 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
   #elif defined (ARDUINO_ESP32_DEV) //M35
     Wire.begin(21, 22, 400000);
     //Touch.begin();
-    Bat.begin();
+    Axp.begin();
+    //Bat.begin();
     Ioe.begin();
     Ioe.initPins();
     Dac.begin();

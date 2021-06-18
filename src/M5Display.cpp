@@ -2,7 +2,7 @@
 
 #define BLK_PWM_CHANNEL 7 // LEDC_CHANNEL_7
 
-#if defined (ARDUINO_M5Stick_C) || defined (ARDUINO_M5STACK_Core2)
+#if defined (ARDUINO_M5Stick_C) || defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_ESP32_DEV) //M35
   #include "drivers/M5x/AXP192/AXP192.h"
 #endif
 #if defined (ARDUINO_ESP32_DEV) || defined (ARDUINO_D1_MINI32)	//M35, K36
@@ -54,7 +54,10 @@ void M5Display::setBrightness(uint8_t brightness) {
   #elif defined (ARDUINO_M5Stick_C)
     //AXP->ScreenBreath(brightness * 10 / 13 + 7);  // brightness in % for 7 to 15 LDO Vvalue
     AXP->ScreenBreath((brightness >> 5) + 7);  // brightness 0-255
-  #elif defined (ARDUINO_ESP32_DEV) || defined (ARDUINO_D1_MINI32)  //M35 or K36
+  #elif defined (ARDUINO_ESP32_DEV) //M35
+    //AXP->SetLcdVoltage(brightness * 80 + 2500); //For M5ez
+    AXP->SetLcdVoltage(brightness * 3 + 2530);  // brightness 0-255
+  #elif defined (ARDUINO_D1_MINI32)  //M35 or K36
     IOE->setLcdBrightness(brightness, LOW);
   #endif
 }

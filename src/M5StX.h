@@ -142,8 +142,9 @@
       #include "SD.h"
       #include "FS.h"
     #elif defined (ARDUINO_ESP32_DEV)     //M35
+      #include "drivers/M5x/AXP192/AXP192.h"
       #include "drivers/M5x/Button/Button.h"
-      #include "drivers/M35/LTC2943/LTC2943.h"
+      //#include "drivers/M35/LTC2943/LTC2943.h"
       #include "drivers/M35/MAX7315/MAX7315.h"
       #include "drivers/M5x/WM8978/WM8978.h"
       #include "SD.h"
@@ -231,7 +232,8 @@
           void powerOFF() { Axp.PowerOff(); }
           void powerOff() { Axp.PowerOff(); }
         #elif defined (ARDUINO_ESP32_DEV)     //M35
-          LTC2943 Bat;
+          AXP192 Axp = AXP192();
+          //LTC2943 Bat;
           MAX7315 Ioe = MAX7315(/*MAX7315_I2C_ADDRESS*/);
           WM8978 Dac;
           void powerOFF() { Ioe.powerOff(); } //For M5ez-demo

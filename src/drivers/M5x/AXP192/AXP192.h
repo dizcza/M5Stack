@@ -13,7 +13,7 @@
 
 typedef enum {
     kMBusModeOutput = 0,  // powered by USB or Battery  
-    kMBusModeInput = 1  // powered by outside input
+    kMBusModeInput = 1  // powered by external input
 } mbus_mode_t;
 
 class AXP192 {
@@ -41,16 +41,56 @@ public:
     static AXP192* instance;
     
     #if defined (ARDUINO_M5STACK_Core2)
+      #define AXPWIRE Wire1
+      /**
+       * DCDC1: Main rail. When not set the controller shuts down.
+       * DCDC2: Not used (but powered)
+       * DCDC3: Display backlight
+       * LDO1: RTC_VDD
+       * LDO2: PERI_VDD
+       * LDO3: VIB_MOTOR
+       * RTC: Don't set GPIO1 as LDO
+       * GPIO0: BUS_PW_EN
+       * GPIO1: SYS_LED
+       * GPIO2: SPK_EN
+       * GPIO3: N/U
+       * GPIO4: LCD_RST
+       */
       void  begin(mbus_mode_t mode = kMBusModeOutput);
     #elif defined (ARDUINO_M5Stick_C) /* || defined (ARDUINO_M5Stick_C_Plus) */
+      #define AXPWIRE Wire1
       /**
+       * DCDC1: Main rail. When not set the controller shuts down.
+       * DCDC2: Not used (but powered)
+       * DCDC3: Not used (but powered)
+       * LDO1: RTC_VDD
        * LDO2: Display backlight
        * LDO3: Display Control
        * RTC: Don't set GPIO1 as LDO
-       * DCDC1: Main rail. When not set the controller shuts down.
-       * DCDC3: Use unknown
+       * GPIO0: MIC_VCC
+       * GPIO1: N/U
+       * GPIO2: N/U
+       * GPIO3: N/U
+       * GPIO4: N/U
        */
       void  begin(bool disableLcdBl = false, bool disablePeriph = false, bool disableRTC = false, bool disableVibr = true);
+    #elif defined (ARDUINO_ESP32_DEV)     //M35
+      #define AXPWIRE Wire
+      /**
+       * DCDC1: Main rail. When not set the controller shuts down.
+       * DCDC2: PERIPH_VDD
+       * DCDC3: LCD_BL
+       * LDO1: RTC_VDD
+       * LDO2: GNSS_VDD ?
+       * LDO3: PERIPH_1V8
+       * RTC: Don't set GPIO1 as LDO
+       * GPIO0: BUS_PW_EN
+       * GPIO1: SEARCH_LED
+       * GPIO2: SPK_EN
+       * GPIO3: GNSS_EXTINT
+       * GPIO4: LCD_RST
+       */
+      void  begin(mbus_mode_t mode = kMBusModeOutput, bool disableRTC = false, bool disableLcdBl = false, bool disablePeriph = false);
     #endif
 
     void ScreenBreath(uint8_t brightness);
@@ -67,9 +107,16 @@ public:
       void SetLcdVoltage(uint16_t voltage);
       void SetLed(uint8_t state);
       void SetSpkEnable(uint8_t state);
-    #elif defined (ARDUINO_M5Stick_C) || defined (ARDUINO_M5Stick_C_Plus)
+    #elif defined (ARDUINO_M5Stick_C) /* || defined (ARDUINO_M5Stick_C_Plus) */
       void SetLDO2(bool State); // Can turn LCD Backlight OFF for power saving
       void SetLDO3(bool State); // Lcd controller
+    #elif defined (ARDUINO_ESP32_DEV)     //M35
+      void SetBusPowerMode(mbus_mode_t mode);
+      void SetLcdVoltage(uint16_t voltage); //DCDC3
+      void SetLed(uint8_t state);       //LDO1
+      void SetSpkEnable(uint8_t state); //LDO2
+      void SetExtint(uint8_t state);    //LDO3
+      void SetPeriphReset(bool state);       //LDO4
     #endif
     // Sleep 
     void SetSleep(void);

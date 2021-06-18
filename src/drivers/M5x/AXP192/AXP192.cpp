@@ -8,7 +8,7 @@ AXP192::AXP192() {
 
 #if defined (ARDUINO_M5STACK_Core2)
 
-    void AXP192::begin(mbus_mode_t mode) {
+    void AXP192::begin(mbus_mode_t mode /* = kMBusModeOutput */) {
         log_w("[ AXP ]");
         //AXP192 30H
         Write1Byte(0x30, (Read8bit(0x30) & 0x04) | 0x02);
@@ -52,8 +52,7 @@ AXP192::AXP192() {
         delay(100);
         SetLCDRSet(1);
         delay(100);
-        // I2C_WriteByteDataAt(0X15,0XFE,0XFF);
-        // bus power mode_output
+        // bus power mode kMBusModeOutput
         SetBusPowerMode(mode);
     }
 
@@ -99,21 +98,76 @@ AXP192::AXP192() {
         //Write1Byte(0x31 , (Read8bit(0x31) & 0xF8) | (1 << 2));
         ScreenBreath(11);
     }
+
+#elif defined (ARDUINO_ESP32_DEV)     //M35
+    void AXP192::begin(mbus_mode_t mode /* = kMBusModeOutput */,
+                        bool disableRTC /* = false */,
+                        bool disableLcdBl /* = false */,
+                        bool disablePeriph /* = false */) {
+        log_w("[ AXP ]");
+        //AXP192 30H
+        Write1Byte(0x30, (Read8bit(0x30) & 0x04) | 0x02);
+        log_d("  - VBUS limit off");
+        //AXP192 GPIO1:OD OUTPUT
+        Write1Byte(0x92, Read8bit(0x92) & 0xF8);
+        log_d("  - GPIO1 init as output");
+        //AXP192 GPIO2:OD OUTPUT
+        Write1Byte(0x93, Read8bit(0x93) & 0xF8);
+        log_d("  - GPIO2 init as output");
+        //AXP192 RTC CHG
+        Write1Byte(0x35, (Read8bit(0x35) & 0x1C) | 0xA3);
+        log_w("  - RTC battery charging enabled");
+        SetESPVoltage(3350);
+        log_w("  - ESP32 power voltage was set to 3.35v");
+        SetLcdVoltage(2800);
+        log_w("  - TFT backlight voltage was set to 2.80v");
+        SetLDOVoltage(2, 3300); //Periph power voltage preset (LCD_logic, SD card)
+        log_w("  - TFT logic and SDCard voltage preset to 3.3v");
+        SetLDOVoltage(3, 1800); //ICM-20948 voltage preset
+        log_w("  - IMU voltage preset to 1v8");
+        SetLDOEnable(2, true);  //LCD_logic, SD card
+        //SetDCDC3(true); // LCD backlight
+        SetLed(false);
+        Write1Byte(0x33, 0xC0); //Bat charge voltage to 4.2, Current 100MA
+        //SetCHGCurrent(kCHG_100mA);
+        log_w("  - M5Go CHG Base current set to 100mA");
+        //SetAxpPriphPower(1);
+        //Serial.printf("axp: lcd_logic and sdcard power enabled\n\n");
+        pinMode(37, INPUT_PULLUP);  //To unify SetSleep
+        //AXP192 GPIO4
+        Write1Byte(0x95, (Read8bit(0x95) & 0x72) | 0x84);
+        log_d("  - GPIO4 init");
+        // 128ms power on, 4s power off
+        Write1Byte(0x36, 0x4C);
+        // Set ADC sample rate to 200hz
+        Write1Byte(0x84, 0b11110010);
+        // Set ADC to All Enable
+        Write1Byte(0x82, 0xFF);
+        // Set GPIO4 to 0
+        SetPeriphReset(0);
+        delay(100);
+        // Set GPIO4 to 1
+        SetPeriphReset(1);
+        delay(100);
+        // Set bus power mode kMBusModeOutput
+        SetBusPowerMode(mode);
+    }
+
 #endif
 
 void AXP192::Write1Byte(uint8_t Addr, uint8_t Data) {
-    Wire1.beginTransmission(AXP_ADDR);
-    Wire1.write(Addr);
-    Wire1.write(Data);
-    Wire1.endTransmission();
+    AXPWIRE.beginTransmission(AXP_ADDR);
+    AXPWIRE.write(Addr);
+    AXPWIRE.write(Data);
+    AXPWIRE.endTransmission();
 }
 
 uint8_t AXP192::Read8bit(uint8_t Addr) {
-    Wire1.beginTransmission(AXP_ADDR);
-    Wire1.write(Addr);
-    Wire1.endTransmission();
-    Wire1.requestFrom(AXP_ADDR, 1);
-    return Wire1.read();
+    AXPWIRE.beginTransmission(AXP_ADDR);
+    AXPWIRE.write(Addr);
+    AXPWIRE.endTransmission();
+    AXPWIRE.requestFrom(AXP_ADDR, 1);
+    return AXPWIRE.read();
 }
 
 uint16_t AXP192::Read12Bit(uint8_t Addr) {
@@ -134,50 +188,50 @@ uint16_t AXP192::Read13Bit(uint8_t Addr) {
 
 uint16_t AXP192::Read16bit(uint8_t Addr) {
     uint16_t ReData = 0;
-    Wire1.beginTransmission(AXP_ADDR);
-    Wire1.write(Addr);
-    Wire1.endTransmission();
-    Wire1.requestFrom(AXP_ADDR, 2);
+    AXPWIRE.beginTransmission(AXP_ADDR);
+    AXPWIRE.write(Addr);
+    AXPWIRE.endTransmission();
+    AXPWIRE.requestFrom(AXP_ADDR, 2);
     for (int i = 0; i < 2; i++) {
         ReData <<= 8;
-        ReData |= Wire1.read();
+        ReData |= AXPWIRE.read();
     }
     return ReData;
 }
 
 uint32_t AXP192::Read24bit(uint8_t Addr) {
     uint32_t ReData = 0;
-    Wire1.beginTransmission(AXP_ADDR);
-    Wire1.write(Addr);
-    Wire1.endTransmission();
-    Wire1.requestFrom(AXP_ADDR, 3);
+    AXPWIRE.beginTransmission(AXP_ADDR);
+    AXPWIRE.write(Addr);
+    AXPWIRE.endTransmission();
+    AXPWIRE.requestFrom(AXP_ADDR, 3);
     for (int i = 0; i < 3; i++) {
         ReData <<= 8;
-        ReData |= Wire1.read();
+        ReData |= AXPWIRE.read();
     }
     return ReData;
 }
 
 uint32_t AXP192::Read32bit(uint8_t Addr) {
     uint32_t ReData = 0;
-    Wire1.beginTransmission(AXP_ADDR);
-    Wire1.write(Addr);
-    Wire1.endTransmission();
-    Wire1.requestFrom(AXP_ADDR, 4);
+    AXPWIRE.beginTransmission(AXP_ADDR);
+    AXPWIRE.write(Addr);
+    AXPWIRE.endTransmission();
+    AXPWIRE.requestFrom(AXP_ADDR, 4);
     for (int i = 0; i < 4; i++) {
         ReData <<= 8;
-        ReData |= Wire1.read();
+        ReData |= AXPWIRE.read();
     }
     return ReData;
 }
 
 void AXP192::ReadBuff(uint8_t Addr, uint8_t Size, uint8_t *Buff) {
-    Wire1.beginTransmission(AXP_ADDR);
-    Wire1.write(Addr);
-    Wire1.endTransmission();
-    Wire1.requestFrom(AXP_ADDR, (int)Size);
+    AXPWIRE.beginTransmission(AXP_ADDR);
+    AXPWIRE.write(Addr);
+    AXPWIRE.endTransmission();
+    AXPWIRE.requestFrom(AXP_ADDR, (int)Size);
     for (int i = 0; i < Size; i++) {
-        *(Buff + i) = Wire1.read();
+        *(Buff + i) = AXPWIRE.read();
     }
 }
 
@@ -337,10 +391,17 @@ uint16_t AXP192::GetVapsData(void) {
         Write1Byte(0x82, 0x00); // Disable ADCs
         Write1Byte(0x12, Read8bit(0x12) & 0xA1); // Disable all outputs but DCDC1
     }
-#elif defined (ARDUINO_M5Stick_C) || defined (ARDUINO_M5Stick_C_Plus)
+#elif defined (ARDUINO_M5Stick_C) /*|| defined (ARDUINO_M5Stick_C_Plus) */
     void AXP192::SetSleep(void) {
         Write1Byte(0x31 , Read8bit(0x31) | ( 1 << 3)); // Turn on short press to wake up
         Write1Byte(0x90 , Read8bit(0x90) | 0x07); // GPIO0 - floating in M5StickC/+, OD - M5Core2
+        Write1Byte(0x82, 0x00); // Disable ADCs
+        Write1Byte(0x12, Read8bit(0x12) & 0xA1); // Disable all outputs but DCDC1
+    }
+#elif defined (ARDUINO_ESP32_DEV)     //M35
+    void AXP192::SetSleep(void) {
+        Write1Byte(0x31 , Read8bit(0x31) | ( 1 << 3)); // Turn on short press to wake up
+        Write1Byte(0x90 , Read8bit(0x90) & 0xF8); // GPIO0 - floating in M5StickC/+, OD - M5Core2
         Write1Byte(0x82, 0x00); // Disable ADCs
         Write1Byte(0x12, Read8bit(0x12) & 0xA1); // Disable all outputs but DCDC1
     }
@@ -524,6 +585,7 @@ void AXP192::SetLDOEnable(uint8_t number, bool state) {
     if (state) Write1Byte(0x12, (Read8bit(0x12) | mark));
     else Write1Byte(0x12, (Read8bit(0x12) & (~mark)));
 }
+
 #if defined (ARDUINO_M5STACK_Core2)
     void AXP192::SetLCDRSet(bool state) {
         uint8_t reg_addr = 0x96;
@@ -535,15 +597,19 @@ void AXP192::SetLDOEnable(uint8_t number, bool state) {
         Write1Byte(reg_addr, data);
     }
 
+    // Select source for BUS_5V
+    // kMBusModeOutput : powered by USB or Battery
+    // kMBusModeInput  : powered by external input
     void AXP192::SetBusPowerMode(mbus_mode_t mode) {
         uint8_t data;
         if (mode == kMBusModeOutput) {
+            // Set GPIO to 3.3V (LDO OUTPUT mode)
             data = Read8bit(0x91);
             Write1Byte(0x91, (data & 0x0F) | 0xF0);
-            //set GPIO0 to LDO OUTPUT , pullup N_VBUSEN to disable supply from BUS_5V
+            // Set GPIO0 to LDO OUTPUT, pullup N_VBUSEN to disable VBUS supply from BUS_5V
             data = Read8bit(0x90);
             Write1Byte(0x90, (data & 0xF8) | 0x02);
-            //set EXTEN to enable 5v boost
+            // Set EXTEN to enable 5v boost
             data = Read8bit(0x10);
             Write1Byte(0x10, data | 0x04);
         } else {
@@ -581,6 +647,7 @@ void AXP192::SetLDOEnable(uint8_t number, bool state) {
         else data &= ~gpio_bit;
         Write1Byte(reg_addr, data);
     }
+
 #elif defined (ARDUINO_M5Stick_C) || defined (ARDUINO_M5Stick_C_Plus)
     // Can turn LCD Backlight OFF for power saving
     void AXP192::SetLDO2(bool State) {
@@ -596,6 +663,76 @@ void AXP192::SetLDOEnable(uint8_t number, bool state) {
         if(State == true) buf = (1<<3) | buf;
         else buf = ~(1<<3) & buf;
         Write1Byte(0x12, buf);
+    }
+
+#elif defined (ARDUINO_ESP32_DEV)     //M35
+
+    // Select source for BUS_5V
+    // kMBusModeOutput : powered by USB or Battery
+    // kMBusModeInput  : powered by external input
+    void AXP192::SetBusPowerMode(mbus_mode_t mode) {
+        uint8_t data;
+        if (mode == kMBusModeOutput) {
+            // Set GPIO to 3.3V (LDO OUTPUT mode)
+            data = Read8bit(0x91);
+            Write1Byte(0x91, (data & 0x0F) | 0xF0);
+            // Set GPIO0 to LDO OUTPUT, pullup N_VBUSEN to disable VBUS supply from BUS_5V
+            data = Read8bit(0x90);
+            Write1Byte(0x90, (data & 0xF8) | 0x02);
+            // Set EXTEN to enable 5v boost
+            data = Read8bit(0x10);
+            Write1Byte(0x10, data | 0x04);
+        } else {
+            // Set EXTEN to disable 5v boost
+            data = Read8bit(0x10);
+            Write1Byte(0x10, data & ~0x04);
+            // Set GPIO0 to float, using enternal pulldown resistor to enable VBUS supply from BUS_5V
+            data = Read8bit(0x90);
+            Write1Byte(0x90, (data & 0xF8) | 0x07);
+        }
+    }
+
+    // Set DCDC2 in 2V5 to 3V3 range
+    void AXP192::SetLcdVoltage(uint16_t voltage) {
+        if (voltage >= 2500 && voltage <= 3300) {
+            SetDCVoltage(2, voltage);
+        }
+    }
+
+    //Set LED on GPIO1 to state
+    void AXP192::SetLed(uint8_t state) {
+        uint8_t data;
+        data=Read8bit(0x94);
+        if(state) data &= 0xFD;
+        else data |= 0x02;
+        Write1Byte(0x94, data);
+    }
+
+    // Set SPK_EN (GPIO2) 1 to enable amplifier
+    void AXP192::SetSpkEnable(uint8_t state) {
+        uint8_t data;
+        data=Read8bit(0x94);
+        if(state) data |= 0x04;
+        else data &= 0xFB; // ~0x04
+        Write1Byte(0x94, data);
+    }
+
+    // Set GNSS EXTINT (GPIO3) state
+    void AXP192::SetExtint(uint8_t state) {
+        uint8_t data;
+        data = Read8bit(0x96);
+        if (state) data |= 0x01;
+        else data &= 0xFE; //~0x01
+        Write1Byte(0x96, data);
+    }
+
+    // Set PERIPH_RESET (GPIO4) state
+    void AXP192::SetPeriphReset(bool state) {
+        uint8_t data;
+        data = Read8bit(0x96);
+        if (state) data |= 0x02;
+        else data &= 0xFD; //~0x02
+        Write1Byte(0x96, data);
     }
 #endif
 
@@ -620,30 +757,30 @@ void AXP192::SetAdcState(bool state) {
 // AXP192 have a 6 byte storage, when the power is still valid, the data will not be lost
 void AXP192::Read6BytesStorage( uint8_t *bufPtr ) {
     // Address from 0x06 - 0x0B
-    Wire1.beginTransmission(AXP_ADDR);
-    Wire1.write(0x06);
-    Wire1.endTransmission();
-    Wire1.requestFrom(AXP_ADDR, 6);
+    AXPWIRE.beginTransmission(AXP_ADDR);
+    AXPWIRE.write(0x06);
+    AXPWIRE.endTransmission();
+    AXPWIRE.requestFrom(AXP_ADDR, 6);
     for( int i = 0; i < 6; ++i ) {
-        bufPtr[i] = Wire1.read();
+        bufPtr[i] = AXPWIRE.read();
     }
 }
 
 // AXP192 have a 6 byte storage, when the power is still valid, the data will not be lost
 void AXP192::Write6BytesStorage( uint8_t *bufPtr ) {
     // Address from 0x06 - 0x0B
-    Wire1.beginTransmission(AXP_ADDR);
-    Wire1.write(0x06);
-    Wire1.write(bufPtr[0]);
-    Wire1.write(0x07);
-    Wire1.write(bufPtr[1]);
-    Wire1.write(0x08);
-    Wire1.write(bufPtr[2]);
-    Wire1.write(0x09);
-    Wire1.write(bufPtr[3]);
-    Wire1.write(0x0A);
-    Wire1.write(bufPtr[4]);
-    Wire1.write(0x0B);
-    Wire1.write(bufPtr[5]);
-    Wire1.endTransmission();
+    AXPWIRE.beginTransmission(AXP_ADDR);
+    AXPWIRE.write(0x06);
+    AXPWIRE.write(bufPtr[0]);
+    AXPWIRE.write(0x07);
+    AXPWIRE.write(bufPtr[1]);
+    AXPWIRE.write(0x08);
+    AXPWIRE.write(bufPtr[2]);
+    AXPWIRE.write(0x09);
+    AXPWIRE.write(bufPtr[3]);
+    AXPWIRE.write(0x0A);
+    AXPWIRE.write(bufPtr[4]);
+    AXPWIRE.write(0x0B);
+    AXPWIRE.write(bufPtr[5]);
+    AXPWIRE.endTransmission();
 }
