@@ -19,7 +19,7 @@ void BM8563::WriteReg(uint8_t reg, uint8_t data) {
 uint8_t BM8563::ReadReg(uint8_t reg) {
   Wire1.beginTransmission(BM8563_ADDR);
   Wire1.write(reg);
-  Wire1.endTransmission();
+  Wire1.endTransmission(false);
   Wire1.requestFrom(BM8563_ADDR, (uint8_t)1);
   uint8_t buf = Wire1.read();
   return buf;
@@ -37,7 +37,7 @@ bool BM8563::isrunning(void) {
 void BM8563::GetBm8563Time(void) {
   Wire1.beginTransmission(BM8563_ADDR);
   Wire1.write(0x02);
-  Wire1.endTransmission();
+  Wire1.endTransmission(false);
   Wire1.requestFrom(BM8563_ADDR,(uint8_t)7);
   while(Wire1.available()){
     trdata[0] = Wire1.read();
@@ -110,7 +110,7 @@ void BM8563::GetTime(RTC_TimeTypeDef* RTC_TimeStruct) {
   uint8_t buf[3] = {0};
   Wire1.beginTransmission(BM8563_ADDR);
   Wire1.write(0x02);
-  Wire1.endTransmission();
+  Wire1.endTransmission(false);
   Wire1.requestFrom(BM8563_ADDR,(uint8_t)3);
   while(Wire1.available()){
     buf[0] = Wire1.read();
@@ -136,7 +136,7 @@ void BM8563::GetDate(RTC_DateTypeDef* RTC_DateStruct) {
   uint8_t buf[4] = {0};
   Wire1.beginTransmission(BM8563_ADDR);
   Wire1.write(0x05);
-  Wire1.endTransmission();
+  Wire1.endTransmission(false);
   Wire1.requestFrom(BM8563_ADDR,(uint8_t)4);
   while(Wire1.available()){
     buf[0] = Wire1.read();
