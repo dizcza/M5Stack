@@ -277,6 +277,47 @@ class Synth : public M5SoundSource {
   float _startEnvelope;
 };
 
+#define GAMMA                         1.24f
+#define AIR_MOLECULAR_MEAN_FREE_PATH  6.8e-8
+#define ATMOSPHERIC_PRESSURE          101000
+
+enum gunshot_t {
+  GS_MB,
+  GS_SW,
+  GS_SB
+};
+
+class GunShot : public M5SoundSource {
+    public:
+        GunShot(gunshot_t waveform_ = GS_MB,
+                    uint8_t projDiam_ = 152, uint16_t projLen_ = 860,
+                    uint16_t barrelLen_ = 6184, uint16_t exitP_ = 3600, uint16_t exitV_ = 560,
+                    uint16_t micDist_ = 10000, uint8_t micTau_ = 15,
+                    uint16_t csnd_ = 33130, float gain_ = GAIN);
+        virtual uint16_t read(int16_t* buffer, uint16_t size);
+        void start();
+        void stop();
+        void playFor(uint32_t msec);
+        void play();
+        float gain, phase;
+        uint32_t startTime, stopTime;
+        uint32_t toa;   // the time of the wave arrival in ms
+    protected:
+        gunshot_t waveform;
+        float projDiam, projLen, boreArea, barrelLen;
+        float exitP, exitV, csnd, M;
+        float r, theta, coneAngle;
+        
+        // MB - tau, amplitude
+        float tau;      // positive phase duration in s
+        float pressAmp; // the pressure amplitude in Pa
+
+        // SW - pmax, Td, tr
+        float pmax; // the SW amplitude in Pa
+        float Td;   // the SW total duration in s
+        float tr;   // the rise time in s
+};
+
 
 class M5SoundSink {
  public:

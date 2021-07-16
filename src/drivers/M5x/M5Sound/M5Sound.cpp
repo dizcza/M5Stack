@@ -348,6 +348,199 @@ void Synth::playFor(uint32_t msec) {
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// GunShot
+// Hacıhabiboğlu, H. (2017). Procedural Synthesis of Gunshot Sounds Based on
+// Physically Motivated Models. In Game Dynamics (pp. 47-69). Springer, Cham.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+/* GunShot constructor
+ *
+ * @param projDiam  - the projectile diameter in mm
+ * @param projLen   - the projectile length in mm
+ * @param barrelLen - the barrel length in mm
+ * @param exitP     - the muzzle pressure in kg/cm2
+ * @param exitV     - the exit velocity of the projectile in m/s
+ * @param micDist   - the distance between the gun and the microphone in m
+ * @param micTheta  - the angle between the boreline and the microphone position in degree
+ * @param csnd      - the speed of sound in cm/s
+ */
+GunShot::GunShot(gunshot_t waveform_ /* = GS_MB */,
+        uint8_t projDiam_ /* = 152 */, uint16_t projLen_ /* = 860 */,
+        uint16_t barrelLen_ /* = 6184 */, uint16_t exitP_ /* = 3600 */, uint16_t exitV_ /* = 560 */,
+        uint16_t micDist_ /* = 10000 */, uint8_t micTheta_ /* = 15 */,
+        uint16_t csnd_ /* = 33130 */, float gain_ /* = GAIN */) {
+
+    waveform = waveform_;
+    projDiam = projDiam_ / 1000.f;  // in m
+    projLen = projLen_ / 1000.f;    // in m
+    boreArea = M_PI * projDiam_ * projDiam_ / 4;
+    barrelLen = barrelLen_ / 100.f; // in m
+    exitP = 98066.5f * exitP_;      // in Pa
+    exitV = (float)exitV_;          // in m/s
+    r = (float)micDist_;            // in m
+    theta = micTheta_ * M_PI / 180; // in radians
+    csnd = csnd_ / 100.f;
+    M = exitV / csnd;               // the Mach number
+    coneAngle = asin(1.f / M);      // gun.coneAngle(M);
+
+    switch (waveform) {
+        case GS_MB:
+            // Calculates the momentum index defined as the ratio of the sound
+            // pressure at the front and at the rear of the firing position
+            float peb, xmod, mu;
+            peb = exitP / ATMOSPHERIC_PRESSURE;
+            xmod = M * sqrt(GAMMA * peb / 2);
+            mu = 0.83f - 0.0063f * xmod;
+
+            // Calculate the scaling length `scalingLen` and the direction weighted scaling length `lp`
+            // Energy deposition rate, eq. 2
+            float dEdT, scalingLen, ratio, lp, rb, rb_inv, X;
+            dEdT = (GAMMA * peb * exitV) / (GAMMA - 1) * (1 + (GAMMA - 1) / 2 * M * M) * boreArea;
+            scalingLen = sqrt(dEdT / (ATMOSPHERIC_PRESSURE * csnd));
+            // TODO find a better constant for the scaling length
+            scalingLen *= 10;
+            ratio = mu * cos(theta) + sqrt(1 - pow(mu * sin(theta), 2));
+            // @param lp   - the direction weighted scaling length in m
+            lp = scalingLen * ratio;
+            rb = r / lp;
+            rb_inv = lp / r;
+            X = sqrt(rb * rb + 1.04f * rb + 1.88f);
+
+            // Calculate the time of arrival of the muzzle blast in s
+            float ta_norm, ta;
+            ta_norm = X - 0.52f * log(2 * X + 2 * rb + 1.04f) - 0.56f;  // Eq. 27
+            ta = ta_norm * lp / csnd;
+            toa = (uint32_t)(ta * 1000);
+
+            // Calculate the positive phase duration of the muzzle blast tau in s
+            // and the peak overpressure of the muzzle blast Pb in Pa
+            float delta, G, tau_norm, Pb;
+            delta = (barrelLen * csnd) / (exitV * scalingLen);
+            G = 0.09 - 0.00379 * delta + 1.07 * (1 - 1.36 * exp(-0.049 * rb)) * scalingLen / lp;  // Eq. 28
+            if (rb < 50.) {
+                tau_norm = rb - X + 0.52 * log(2 * X + 2 * rb + 1.04) + 0.56 + G;
+                Pb = 0.89f * rb_inv + 1.61f * rb_inv * rb_inv;
+            } else {
+                tau_norm = 2.99 * sqrt(log(33119 * rb)) - 8.534 + G;
+                Pb = 3.48975f / (rb * sqrt(log(33119 * rb)));
+            }
+            tau = tau_norm * lp / csnd;
+            pressAmp = Pb * ATMOSPHERIC_PRESSURE;
+            Td = 255;
+            // We got:
+            // @param ta       - the time of MB arrival in s
+            // @param toa      - the time of MB arrival in ms
+            // @param tau      - positive phase duration in s
+            // @param pressAmp - the pressure amplitude in Pa
+            break;
+        case GS_SW:
+            float coneAngle = asin(1.f / M);
+            if ((exitV > csnd) && (coneAngle <= M_PI - theta)) {
+                float xmiss = r * sin(theta);
+                // Calculate the N-wave amplitude in Pa
+                pmax = 0.53 * ATMOSPHERIC_PRESSURE * projDiam * pow(M * M - 1, 0.125) / (pow(xmiss, 0.75) * pow(projLen, 0.25));
+                // Calculate the N-wave arrival time
+                float projectileTravel = r * cos(theta);
+                float soundTravel = xmiss * cos(coneAngle);
+                float ta = projectileTravel / exitV + soundTravel / csnd;
+                toa = (uint32_t)(ta * 1000);
+                // Calculate the N-wave total duration time in s
+                float L = 1.82 * projDiam * M * pow(xmiss, 0.25) / (pow(M * M - 1, 0.375) * pow(projLen, 0.25));
+                Td = L / csnd;
+                // Calculate the N-wave rise time in s
+                tr = (AIR_MOLECULAR_MEAN_FREE_PATH / csnd) * (ATMOSPHERIC_PRESSURE / pmax);
+            }
+            // We got: pmax, ta, Td, tr
+            // @param pmax - the SW amplitude in Pa
+            // @param ta   - the time of SW arrival in s
+            // @param toa  - the time of SW arrival in ms
+            // @param Td   - the SW total duration in s
+            // @returns tr - the rise time in s
+            break;
+    }
+    gain = gain_;
+    phase = 0;
+    startTime = stopTime = 0;
+}
+
+uint16_t GunShot::read(int16_t* buffer, uint16_t size) {
+  if (!startTime || size != TX_CHUNKSIZE) return 0;
+  if (stopTime && millis() > stopTime) {
+      startTime = stopTime = 0;
+      phase = 0;
+      _playing = false;
+      return 0;
+  }
+  // Waveform
+  // Gain efffect quadratic. 181 is (almost) the square root of 32768.
+  uint16_t amplitude = pow((float)(gain * 181), 2);
+  float steps = (1.0 / M5SOUND.samplerate);
+  switch (waveform) {
+    case GS_MB:
+        // Calculate Friedlander model of a muzzle blast wave
+        // @param pressAmp - the pressure amplitude in Pa
+        // @param tau      - positive phase duration in s
+        float x, tauNorm;
+        tauNorm = tau / steps;
+        for (uint16_t i = 0; i < size; i++) {
+          x = i / tauNorm;
+          buffer[i] = amplitude * pressAmp * (1 - x) * exp(-x);  // Pmb
+        }
+        break;
+    case GS_SW:
+        float t, p;
+        if ((exitV <= csnd) || (coneAngle > M_PI - theta)) {
+            // supersonic speed is required
+            memset(buffer, 0, size * sizeof(float));
+            break;
+        }
+        for (uint16_t i = 0; i < size; i++) {
+          t = phase + (i * steps);
+          p = 0;
+          if (t <= tr) {
+              p = pmax * t / tr;
+          } else if ((t > tr) && (t <= (Td - tr))) {
+              p = pmax * (1 - 2 * (t - tr) / (Td - 2 * tr));
+          } else if ((t > (Td - tr)) & (t < Td)) {
+              p = pmax * ((t - (Td - tr)) / tr - 1);
+          }
+          buffer[i] = amplitude * p;
+        }
+        break;
+  }
+  phase += (float)(size) * steps;
+  phase -= (int)phase;
+  return size;
+}
+
+void GunShot::start() {
+  startTime = millis();
+  stopTime = 0;
+  _playing = true;
+}
+
+void GunShot::stop() {
+  // At least 250ms get to play
+  stopTime = startTime + 256;
+  if (millis() > stopTime) stopTime = millis() + 10;
+}
+
+void GunShot::playFor(uint32_t msec) {
+  uint32_t duration = 255;
+  if (msec > duration) duration = msec;
+  startTime = millis();
+  stopTime  = millis() + duration;
+  _playing = true;
+}
+
+void GunShot::play() {
+  playFor(Td);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // M5SoundSink
 //
 /////////////////////////////////////////////////////////////////////////////
