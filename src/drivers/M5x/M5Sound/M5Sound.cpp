@@ -371,20 +371,18 @@ GunShot::GunShot(gunshot_t waveform_ /* = GS_MB */,
         uint16_t barrelLen_ /* = 6184 */, uint16_t exitP_ /* = 3600 */, uint16_t exitV_ /* = 560 */,
         uint16_t micDist_ /* = 10000 */, uint8_t micTheta_ /* = 15 */,
         uint16_t csnd_ /* = 33130 */, float gain_ /* = GAIN */) {
-
     waveform = waveform_;
     projDiam = projDiam_ / 1000.f;  // in m
     projLen = projLen_ / 1000.f;    // in m
     boreArea = M_PI * projDiam_ * projDiam_ / 4;
-    barrelLen = barrelLen_ / 100.f; // in m
+    barrelLen = barrelLen_ / 1000.f;// in m
     exitP = 98066.5f * exitP_;      // in Pa
     exitV = (float)exitV_;          // in m/s
     r = (float)micDist_;            // in m
     theta = micTheta_ * M_PI / 180; // in radians
     csnd = csnd_ / 100.f;
     M = exitV / csnd;               // the Mach number
-    coneAngle = asin(1.f / M);      // gun.coneAngle(M);
-
+    coneAngle = asin(1.f / M);
     switch (waveform) {
         case GS_MB:
             // Calculates the momentum index defined as the ratio of the sound
@@ -467,6 +465,7 @@ GunShot::GunShot(gunshot_t waveform_ /* = GS_MB */,
 
 uint16_t GunShot::read(int16_t* buffer, uint16_t size) {
   if (!startTime || size != TX_CHUNKSIZE) return 0;
+  Serial.println(theta, DEC);
   if (stopTime && millis() > stopTime) {
       startTime = stopTime = 0;
       phase = 0;

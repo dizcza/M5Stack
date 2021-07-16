@@ -302,11 +302,13 @@ class GunShot : public M5SoundSource {
         float gain, phase;
         uint32_t startTime, stopTime;
         uint32_t toa;   // the time of the wave arrival in ms
-    protected:
-        gunshot_t waveform;
+
         float projDiam, projLen, boreArea, barrelLen;
         float exitP, exitV, csnd, M;
         float r, theta, coneAngle;
+
+    protected:
+        gunshot_t waveform;
         
         // MB - tau, amplitude
         float tau;      // positive phase duration in s
