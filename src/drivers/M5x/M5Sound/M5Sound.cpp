@@ -465,7 +465,7 @@ GunShot::GunShot(gunshot_t waveform_ /* = GS_MB */,
 
 uint16_t GunShot::read(int16_t* buffer, uint16_t size) {
   if (!startTime || size != TX_CHUNKSIZE) return 0;
-  Serial.println(theta, DEC);
+  //Serial.println(theta, DEC);
   if (stopTime && millis() > stopTime) {
       startTime = stopTime = 0;
       phase = 0;
