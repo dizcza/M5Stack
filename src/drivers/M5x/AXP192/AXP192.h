@@ -91,6 +91,8 @@ public:
        * GPIO4: LCD_RST
        */
       void  begin(mbus_mode_t mode = kMBusModeOutput, bool disableRTC = false, bool disableLcdBl = false, bool disablePeriph = false);
+    #else
+      #define AXPWIRE Wire
     #endif
 
     void ScreenBreath(uint8_t brightness);
