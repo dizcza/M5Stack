@@ -309,9 +309,7 @@ void setup()
 {
 	// put your setup code here, to run once:
 	M5.begin();
-	Serial.begin(115200);
 	Serial2.begin(115200, SERIAL_8N1, 5, 13);
-	//Serial.printf("FUCK STC\n");
 
 	Disbuff.createSprite(320,20);
 	Disbuff.fillRect(0,0,320,20,BLACK);

@@ -1,6 +1,19 @@
 /*
-    Description: Use SERVO Module to control the rotation of 12-channel servo.
+*******************************************************************************
+* Copyright (c) 2021 by M5Stack
+*                  Equipped with M5Core sample source code
+*                          配套  M5Core 示例源代码
+* Visit the website for more
+information: https://docs.m5stack.com/en/module/servo
+* 获取更多资料请访问: https://docs.m5stack.com/zh_CN/module/servo
+*
+* describe: SERVO.
+* date: 2021/9/2
+*******************************************************************************
+  Use SERVO Module to control the rotation of 12-channel servo.
+  使用 SERVO 模块控制 12 通道舵机的旋转。
 */
+
 #include <Arduino.h>
 #include <M5Stack.h>
 #include <Wire.h>
@@ -13,9 +26,7 @@ void setup() {
     M5.Lcd.setCursor(70, 100);
     M5.Lcd.print("Servo Example");
 
-    Wire.begin(21, 22, 100000);
-    // put your setup code here, to run once:
-}
+    Wire.begin(21, 22, 100000UL);
 
 // addr 0x01 mean control the number 1 servo by us
 void Servo_write_us(uint8_t number, uint16_t us) {
@@ -35,12 +46,12 @@ void Servo_write_angle(uint8_t number, uint8_t angle) {
 }
 
 void loop() {
-    for(uint8_t i = 0; i < 12; i++){
+    for (uint8_t i = 0; i < 12; i++) {
         Servo_write_us(i, 700);
         // Servo_write_angle(i, 0);
     }
     delay(1000);
-    for(uint8_t i = 0; i < 12; i++){
+    for (uint8_t i = 0; i < 12; i++) {
         Servo_write_us(i, 2300);
         // Servo_write_angle(i, 180);
     }
