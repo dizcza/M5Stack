@@ -109,6 +109,31 @@
   #define RX_CHANNEL_FORMAT    I2S_CHANNEL_FMT_ONLY_RIGHT
   #define RX_DMA_BUF_COUNT     4
   #define RX_DMA_BUF_LEN     128
+#elif defined (ARDUINO_TWatch)
+  #define TX_DEV               I2S_NUM_0
+  #define TX_DOUT             33
+  #define TX_BCLK             26
+  #define TX_LRC              25
+  #define TX_MODE              (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX)
+  #define TX_FORMAT            (i2s_comm_format_t)(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB)
+  #define TX_CHANNELS          1
+  #define TX_CHANNEL_FORMAT    I2S_CHANNEL_FMT_ONLY_RIGHT
+  #define TX_DMA_BUF_COUNT     4
+  #define TX_DMA_BUF_LEN     128
+  #define TX_USE_APLL         true
+  #define TX_CHUNKSIZE        32
+
+  #define RX_DEV               I2S_NUM_0
+  #define RX_DIN              14
+  #define RX_BCLK             15
+  #define RX_LRC              13
+  #define RX_MODE              (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX |I2S_MODE_PDM)
+  #define RX_BPS               I2S_BITS_PER_SAMPLE_32BIT
+  #define RX_FORMAT            (i2s_comm_format_t)I2S_COMM_FORMAT_I2S
+  #define RX_CHANNELS          1
+  #define RX_CHANNEL_FORMAT    I2S_CHANNEL_FMT_ONLY_RIGHT
+  #define RX_DMA_BUF_COUNT     4
+  #define RX_DMA_BUF_LEN     128
 #elif defined (ARDUINO_ESP32_DEV)
   #define TX_DEV               I2S_NUM_0
   #define TX_DOUT             12  //DIN on WM8978 PCB
@@ -130,6 +155,31 @@
   #define RX_MODE              (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX)
   #define RX_BPS               I2S_BITS_PER_SAMPLE_32BIT
   #define RX_FORMAT            (i2s_comm_format_t)(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB) //Philips standard
+  #define RX_CHANNELS          1
+  #define RX_CHANNEL_FORMAT    I2S_CHANNEL_FMT_ONLY_LEFT
+  #define RX_DMA_BUF_COUNT     4
+  #define RX_DMA_BUF_LEN     128
+#elif defined (ARDUINO_Piranha) //K46 with MAX98357A
+  #define TX_DEV               I2S_NUM_0
+  #define TX_DOUT             18
+  #define TX_BCLK             19
+  #define TX_LRC              12
+  #define TX_MODE              (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX)
+  #define TX_FORMAT            (i2s_comm_format_t)(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB) //Philips standard
+  #define TX_CHANNELS          1
+  #define TX_CHANNEL_FORMAT    I2S_CHANNEL_FMT_ONLY_LEFT  //Rsd = 0 Ohm to VDD
+  #define TX_DMA_BUF_COUNT     4
+  #define TX_DMA_BUF_LEN     128
+  #define TX_USE_APLL         false
+  #define TX_CHUNKSIZE        32
+
+  #define RX_DEV               I2S_NUM_0
+  #define RX_DIN              17
+  #define RX_BCLK              0
+  #define RX_LRC              12
+  #define RX_MODE              (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX |I2S_MODE_PDM)
+  #define RX_BPS               I2S_BITS_PER_SAMPLE_32BIT
+  #define RX_FORMAT            (i2s_comm_format_t)I2S_COMM_FORMAT_I2S
   #define RX_CHANNELS          1
   #define RX_CHANNEL_FORMAT    I2S_CHANNEL_FMT_ONLY_LEFT
   #define RX_DMA_BUF_COUNT     4
@@ -242,7 +292,7 @@ class M5SoundClass{
   void waitForSilence(uint16_t msec = 0);
   bool silence(uint16_t msec = 0);
   void amplifier(bool state, bool force = false);
-  uint32_t samplerate = SAMPLERATE;
+  int samplerate = SAMPLERATE;
   bool running = false;
 
  protected:
@@ -306,7 +356,7 @@ class M5SoundInClass : public M5SoundSource {
   void stop();
   void update();
   virtual uint16_t read(int16_t* buffer, uint16_t size);
-  uint32_t samplerate = SAMPLERATE;
+  int samplerate = SAMPLERATE;
   bool running = false;
 
  protected:

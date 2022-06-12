@@ -2,7 +2,7 @@
 
 #define BLK_PWM_CHANNEL 7 // LEDC_CHANNEL_7
 
-#if defined (ARDUINO_M5Stick_C) || defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_ESP32_DEV) //M35
+#if defined (ARDUINO_M5Stick_C) || defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_TWatch) || defined (ARDUINO_ESP32_DEV) //M35
   #include "drivers/M5x/AXP192/AXP192.h"
 #endif
 #if defined (ARDUINO_ESP32_DEV) || defined (ARDUINO_D1_MINI32)	//M35, K36
@@ -24,7 +24,7 @@ void M5Display::begin() {
   TFT_eSPI::begin();
   setRotation(DEFAULT_ROTATION);
   fillScreen(0);
-  #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
+  #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_Piranha)//TTGO T4 v1.3  //piranha_esp-32 
     // Init the back-light LED PWM
     ledcSetup(BLK_PWM_CHANNEL, 44100, 8);
     ledcAttachPin(TFT_BL, BLK_PWM_CHANNEL);
@@ -46,7 +46,7 @@ void M5Display::wakeup() {
 
 // M5Stack compatible range 0-255
 void M5Display::setBrightness(uint8_t brightness) {
-  #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
+  #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_Piranha)//TTGO T4 v1.3  //piranha_esp-32 
     ledcWrite(BLK_PWM_CHANNEL, brightness); // brightness 0-255
   #elif defined (ARDUINO_M5STACK_Core2)
     //AXP->SetLcdVoltage(brightness * 80 + 2500); //For M5ez

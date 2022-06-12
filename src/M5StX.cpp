@@ -18,14 +18,22 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     Serial.flush();
     delay(50);
   }
-  #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE)
+  #if defined (ARDUINO_M5Stack_Core_ESP32)
     Wire.begin(21, 22, 400000);
     Power.begin();
+  #elif defined (ARDUINO_M5STACK_FIRE)
+    Wire.begin(21, 22, 400000);
+    Power.begin();
+    // Sound.begin();
+  #elif defined (ARDUINO_Piranha)
+    Wire.begin(21, 22, 400000);
+    Bat.begin();
   #elif defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
     Wire.begin(21, 22, 400000);
     Power.begin();
     pinMode(SPEAKER_EN_PIN, OUTPUT);
     digitalWrite(SPEAKER_EN_PIN, LOW);
+    Sound.begin();
   #elif defined (ARDUINO_M5STACK_Core2)
     Wire1.begin(21, 22, 400000);
     Axp.begin((mbus_mode_t)externalPower);
@@ -34,6 +42,15 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     Rtc.begin();
     Touch.begin();  // Touch begin after AXP begin. (Reset at the start of AXP)
     Wire.begin(32, 33, 400000);
+    Sound.begin();
+  #elif defined (ARDUINO_TWatch)
+    Wire.begin(21, 22, 400000);
+    Wire1.begin(23, 32, 400000);
+    // Axp.begin((mbus_mode_t)externalPower);
+    // Axp.SetLDOEnable(3,0);  // turn any vibration off
+    // Axp.SetSpkEnable(false);
+    Rtc.begin();
+    Touch.begin();  // Touch begin after AXP begin. (Reset at the start of AXP)
   #elif defined (ARDUINO_M5Stick_C) /* || defined (ARDUINO_M5Stick_C_Plus) */
     Wire1.begin(21, 22, 400000);
     Axp.begin();
@@ -41,6 +58,7 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     pinMode(SPEAKER_EN_PIN, OUTPUT);
     digitalWrite(SPEAKER_EN_PIN, LOW);
     //Set Wire on HY2.0-4P ?
+    Sound.begin();
   #elif defined (ARDUINO_ESP32_DEV) //M35
     Wire.begin(21, 22, 400000);
     //Touch.begin();
@@ -49,21 +67,24 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     Ioe.begin();
     Ioe.initPins();
     Dac.begin();
+    Sound.begin();
   #elif defined (ARDUINO_D1_MINI32)  //K36
     Wire.begin(21, 22, 400000);
     Ioe.begin();
     Ioe.initPins();
   #endif
 
-  // Sound
-  Sound.begin();
-
   // LCD INIT
   if (LCDEnable == true) {
     Lcd.begin();
   }
 
-  #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_M5STACK_Core2)
+  #if defined (ARDUINO_M5Stack_Core_ESP32)
+    // TF Card
+    // if (SDEnable == true) {
+    //   SD.begin(TFCARD_CS_PIN, SPI, 40000000);
+    // }
+  #elif defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_M5STACK_FIRE)
     // TF Card
     if (SDEnable == true) {
       SD.begin(TFCARD_CS_PIN, SPI, 40000000);
@@ -90,7 +111,7 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
 }
 
 void M5StX::update() {
-  #if defined (ARDUINO_M5STACK_Core2) /* || defined (ARDUINO_ESP32_DEV) */
+  #if defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_TWatch) /* || defined (ARDUINO_ESP32_DEV) */
     Touch.update();
     Buttons.update();
   #else
@@ -99,7 +120,9 @@ void M5StX::update() {
     M5.BtnC.read();
     //Buttons.update(); //Doesnot work with 3-button text entry!
   #endif
-  Sound.update();
+  #if defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_M5Stick_C) /*|| defined (ARDUINO_M5STACK_FIRE) */
+    Sound.update();
+  #endif
   yield();
 }
 

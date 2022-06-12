@@ -1323,6 +1323,14 @@ void TFT_eSPI::init(uint8_t tc)
 
   // Toggle RST low to reset
 #ifdef TFT_RST
+  #ifdef M5STACK
+    pinMode(TFT_RST, INPUT_PULLDOWN);
+    delay(1);
+    bool lcd_version = digitalRead(TFT_RST);
+    pinMode(TFT_RST, OUTPUT);
+  #else
+    pinMode(TFT_RST, OUTPUT);
+  #endif
   if (TFT_RST >= 0) {
     digitalWrite(TFT_RST, HIGH);
     delay(5);
@@ -1343,7 +1351,16 @@ void TFT_eSPI::init(uint8_t tc)
 
   // This loads the driver specific initialisation code  <<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVERS TO THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<
 #if   defined (ILI9341_DRIVER)
+
+  #ifdef M5STACK
+    if (lcd_version) {
+      #include "TFT_Drivers/ILI9342C_Init.h"
+    } else {
+      #include "TFT_Drivers/ILI9341_Init.h"
+    }
+  #else
     #include "TFT_Drivers/ILI9341_Init.h"
+  #endif
 
 #elif defined (ST7735_DRIVER)
     tabcolor = tc;
@@ -1391,6 +1408,10 @@ void TFT_eSPI::init(uint8_t tc)
 #elif defined (ILI9225_DRIVER)
      #include "TFT_Drivers/ILI9225_Init.h"
 
+#endif
+
+#ifdef M5STACK
+  if (lcd_version) writecommand(TFT_INVON);
 #endif
 
 #ifdef TFT_INVERSION_ON

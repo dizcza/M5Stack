@@ -83,6 +83,7 @@ float SHT3x::getHumidity()
 
 float SHT3x::getSpeedOfSound(float temp, float humidity)
 {
+	float speed;
 	if(humidity < 0.0) humidity = 0;
 	if(humidity > 100.0) humidity = 100.0;
 	if((temp > 0.0) && (temp < 30.0)){
@@ -97,17 +98,17 @@ float SHT3x::getSpeedOfSound(float temp, float humidity)
 		c = sqrt(a[9] * a[9] + 4 * a[14] * c);
 		
 		float Xc = ((-1) * a[9] - c) / ( 2 * a[14]); //the carbon dioxide mole fraction
-		float speed = a[0] + a[1] * temp + a[2] * temp * temp + 
-						(a[3] + a[4] * temp + a[5] * temp * temp) * Xw + 
-						(a[6] + a[7] * temp + a[8] * temp * temp) * p + 
-						(a[9] + a[10] * temp + a[11] * temp * temp) * Xc + 
-						a[12] * Xw * Xw + a[13] * p * p + a[14] * Xc * Xc + 
-						a[15] * Xw * p * Xc;
-		return speed;
+		speed = a[0] + a[1] * temp + a[2] * temp * temp + 
+				(a[3] + a[4] * temp + a[5] * temp * temp) * Xw + 
+				(a[6] + a[7] * temp + a[8] * temp * temp) * p + 
+				(a[9] + a[10] * temp + a[11] * temp * temp) * Xc + 
+				a[12] * Xw * Xw + a[13] * p * p + a[14] * Xc * Xc + 
+				a[15] * Xw * p * Xc;
 	} else { //below 0*C
 
 	}
-}/* method calculateSpeedOfSound */
+	return speed;
+} /* method calculateSpeedOfSound */
 
 void SHT3x::setMode(SHT3xMode mode)
 {

@@ -16,6 +16,44 @@
 
     //In_eSPI_Setup settings first
     #define M5STACK
+    #define M5CORE
+    #define ILI9341_DRIVER
+    #define SPI_FREQUENCY      40000000
+    #define SPI_READ_FREQUENCY 20000000
+    #define DEFAULT_ROTATION   1
+    #define TFT_SDA_READ
+
+    #define TFT_CS            14
+    #define TFT_SCLK          18
+    #define TFT_MISO          19
+    #define TFT_MOSI          23
+    #define TFT_DC            27
+    #define TFT_BL            32
+    #define TFT_RST           33
+
+    #define SD_ENABLE          0
+    // #define TFCARD_CS_PIN      4
+    // #define TFCARD_MISO_PIN    2
+    // #define TFCARD_MOSI_PIN   15
+    // #define TFCARD_SCLK_PIN   14
+
+    // #define SPEAKER_PIN       25
+
+    // RA-1H/SX1276 - RadioHead names
+    #define RADIO_NSS          5
+    #define RADIO_RST         -1  //26
+    #define RADIO_INT         36
+    #define RADIO_SCK         18
+    #define RADIO_MISO        19
+    #define RADIO_MOSI        23
+
+  #elif defined (ARDUINO_M5STACK_FIRE)  //K45
+    #define BUTTON_A_PIN      39
+    #define BUTTON_B_PIN      38
+    #define BUTTON_C_PIN      37
+
+    #define M5STACK
+    #define M5CORE
     #define ILI9341_DRIVER
     #define SPI_FREQUENCY      40000000
     #define SPI_READ_FREQUENCY 20000000
@@ -30,19 +68,17 @@
     #define TFT_BL            32
     #define TFT_MISO          19
 
-    #define SD_ENABLE          1
-    #define TFCARD_CS_PIN      4
-    #define TFCARD_MISO_PIN    2
-    #define TFCARD_MOSI_PIN   15
-    #define TFCARD_SCLK_PIN   14
+    #define SD_ENABLE          0
+    // #define TFCARD_CS_PIN      4
+    // #define TFCARD_MISO_PIN    2
+    // #define TFCARD_MOSI_PIN   15
+    // #define TFCARD_SCLK_PIN   14
 
     #define SPEAKER_PIN       25
 
-    // RA-1H/SX1276 - M5Stack names
-    #define LORA_CS_PIN        5
-    #define LORA_RST_PIN      26
-    #define LORA_IRQ_PIN      36
-    // RA-1H/SX1276 - RadioHead names
+    #define MPU9250_INSDE
+
+    // RFM95C - RadioHead names
     #define RADIO_NSS          5
     #define RADIO_RST         26
     #define RADIO_INT         36
@@ -50,10 +86,10 @@
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
 
-  #elif defined (ARDUINO_M5STACK_FIRE)
-    #define BUTTON_A_PIN      39
-    #define BUTTON_B_PIN      38
-    #define BUTTON_C_PIN      37
+  #elif defined (ARDUINO_Piranha)
+    #define BUTTON_A_PIN      33
+    #define BUTTON_B_PIN      13
+    #define BUTTON_C_PIN       4
 
     #define M5STACK
     #define ILI9341_DRIVER
@@ -62,24 +98,68 @@
     #define DEFAULT_ROTATION   1
     #define TFT_SDA_READ
 
-    #define TFT_CS            14
-    #define TFT_RST           33
+    #define TFT_CS            17
+    #define TFT_RST            5
     #define TFT_DC            27
-    #define TFT_MOSI          23
-    #define TFT_SCLK          18
-    #define TFT_BL            32
-    #define TFT_MISO          19
+    #define TFT_MOSI           2
+    #define TFT_SCLK          15
+    #define TFT_BL            14
+    #define TFT_MISO          16
 
-    #define SD_ENABLE          1
-    #define TFCARD_CS_PIN      4
+    #define BTN_BL            26
+
+    #define SD_ENABLE          0
+
+    // RA-1H/SX1276 - RadioHead names
+    #define RADIO_NSS         25
+    #define RADIO_RST         -1
+    #define RADIO_INT         36
+    #define RADIO_SCK         15
+    #define RADIO_MISO        16
+    #define RADIO_MOSI         2
+
+    #define PIN_VBAT_TEST     18
+  #elif defined (ARDUINO_TWatch)
+    #define ST7789_DRIVER
+    #define SPI_FREQUENCY      27000000
+    #define SPI_READ_FREQUENCY 16000000
+    #define DEFAULT_ROTATION   1
+
+    #define TFT_CS             5
+    #define TFT_RST           -1
+    #define TFT_DC            27
+    #define TFT_MOSI          19
+    #define TFT_SCLK          18
+    #define TFT_BL            12
+    #define TFT_MISO          -1
+
+    #define CST_INT           38
+    #define TOUCH_W          240
+    #define TOUCH_H          240
+
+    #define SD_ENABLE          0
+    #define TFCARD_CS_PIN     13
     #define TFCARD_MISO_PIN    2
     #define TFCARD_MOSI_PIN   15
     #define TFCARD_SCLK_PIN   14
 
-    #define SPEAKER_PIN       25
+    #define SPEAKER_PIN       -1
+    #define PIN_IRQ_AXP       35  //AXP202
+    #define PIN_BUTTON        36
+    #define PIN_IRQ_RTC       37  //PCF8563
+    #define PIN_IRQ_CTS       38  //FT6236
+    #define PIN_IRQ_IMU       39  //BMA423
+    #define GPIO_IRQ_IMU      GPIO_NUM_39
 
-    #define MPU9250_INSDE
-  #elif defined (ARDUINO_M5STACK_Core2) // M5Core2
+    // TTGO LoRa/SX1276 - RadioHead names
+    #define RADIO_NSS         13
+    #define RADIO_RST         25
+    #define RADIO_INT         26
+    #define RADIO_SCK         14
+    #define RADIO_MISO        2
+    #define RADIO_MOSI        15
+
+  #elif defined (ARDUINO_M5STACK_Core2)
     #define M5Stack_M5Core2
     #define M5STACK
     #define ILI9341_DRIVER
@@ -108,10 +188,6 @@
 
     #define SPEAKER_PIN       -1
 
-    // RA-1H/SX1276 - M5Stack names
-    #define LORA_CS_PIN       26
-    #define LORA_RST_PIN      -1
-    #define LORA_IRQ_PIN      36
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS         26
     #define RADIO_RST         -1
@@ -212,10 +288,6 @@
     #define RTC_IRQ_PIN       26
     #define IOE_IRQ_PIN       27
 
-    // RA-1H/SX1276 - M5Stack names
-    #define LORA_CS_PIN       33
-    #define LORA_RST_PIN      -1
-    #define LORA_IRQ_PIN      36
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS         33
     #define RADIO_INT         36
@@ -229,7 +301,7 @@
     #define ETH_CS_PIN        15
     #define ETH_IRQ_PIN       25
     // UART
-    #define USE_SERIAL Serial
+    #define USE_SERIAL    Serial
 
   #elif defined (ARDUINO_D1_MINI32) //Select "WEMOS D1 MINI ESP32" for non-PSRAM custom boards
     #define BUTTON_A_PIN      39
@@ -257,10 +329,6 @@
     #define IOE_IRQ_PIN       35
     #define KEEP_PWR_PIN       2
 
-    // RA-1H/SX1276 - M5Stack names
-    #define LORA_CS_PIN       17
-    #define LORA_RST_PIN      -1
-    #define LORA_IRQ_PIN      36
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS         17
     #define RADIO_RST         -1

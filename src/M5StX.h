@@ -87,6 +87,8 @@
  * <pre>
  * `<Author>`         `<Time>`        `<Version>`        `<Descr>`
  * UT2UH               2021/05/20        0.0.1          M35 rework created
+ * UT2UH               2021/10/20        0.0.2          K46 support added
+ * UT2UH               2022/01/05        0.0.3          TWatch support added
  * </pre>
  *
  */
@@ -110,25 +112,41 @@
 
     #include "utility/Config.h"
     #include "M5Display.h"
-    #include "drivers/M5x/M5Sound/M5Sound.h"
 
-    #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE)
+    #if defined (ARDUINO_M5Stack_Core_ESP32)
       #include "drivers/M5x/Button/Button.h"
       #include "drivers/M5x/IP5306/Power.h"
-      #if defined MPU9250_INSDE                   // Grey, Fire
-        #include "drivers/M5x/MPU9250/MPU9250.h"
-      #endif
-      #if defined M5STACK_NODE
-        #include "drivers/M5x/WM8978/WM8978.h"
-      #endif
-      #include "SD.h"
-      #include "FS.h"
+      // #include "SD.h"
+      // #include "FS.h"
+    #elif defined (ARDUINO_M5STACK_FIRE)  //K45
+      #include "drivers/M5x/Button/Button.h"
+      #include "drivers/M5x/IP5306/Power.h"
+      // #if defined MPU9250_INSDE                   // Grey, Fire
+      //   #include "drivers/M5x/MPU9250/MPU9250.h"
+      // #endif
+      // #if defined M5STACK_NODE
+      //   #include "drivers/M5x/WM8978/WM8978.h"
+      // #endif
+      // #include "drivers/M5x/M5Sound/M5Sound.h"
+      // #include "SD.h"
+      // #include "FS.h"
+    #elif defined (ARDUINO_Piranha) //piranha_esp-32  //K46
+      #include "drivers/M5x/Button/Button.h"
+      #include "drivers/M5x/K46Bat/K46Bat.h"
+    #elif defined (ARDUINO_TWatch)  //2019+LoRa 868MHz
+      #include "drivers/M5x/M5Touch/M5Touch.h"
+      #include "drivers/M5x/M5Button/M5Button.h"	// M5Buttons, M5Events, Button, Gesture
+      #include "drivers/M5x/AXP192/AXP192.h"
+      #include "drivers/M5x/BM8563/BM8563.h"
+      // #include "SD.h"
+      // #include "FS.h"
     #elif defined (ARDUINO_M5STACK_Core2)
       #include "drivers/M5x/M5Touch/M5Touch.h"
       #include "drivers/M5x/M5Button/M5Button.h"	// M5Buttons, M5Events, Button, Gesture
       #include "drivers/M5x/AXP192/AXP192.h"
       #include "drivers/M5x/BM8563/BM8563.h"
       #include "drivers/M5x/MPU6886/MPU6886.h"
+      #include "drivers/M5x/M5Sound/M5Sound.h"
       #include "SD.h"
       #include "FS.h"
     #elif defined (ARDUINO_M5Stick_C) /*|| defined (ARDUINO_M5Stick_C_Plus) */
@@ -136,9 +154,11 @@
       #include "drivers/M5x/AXP192/AXP192.h"
       #include "drivers/M5x/BM8563/BM8563.h"
       #include "drivers/M5x/MPU6886/MPU6886.h"
+      #include "drivers/M5x/M5Sound/M5Sound.h"
     #elif defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
       #include "drivers/M5x/Button/Button.h"
       #include "drivers/M5x/IP5306/Power.h"
+      #include "drivers/M5x/M5Sound/M5Sound.h"
       #include "SD.h"
       #include "FS.h"
     #elif defined (ARDUINO_ESP32_DEV)     //M35
@@ -147,6 +167,7 @@
       //#include "drivers/M35/LTC2943/LTC2943.h"
       #include "drivers/M35/MAX7315/MAX7315.h"
       #include "drivers/M5x/WM8978/WM8978.h"
+      #include "drivers/M5x/M5Sound/M5Sound.h"
       #include "SD.h"
       #include "FS.h"
     #elif defined (ARDUINO_D1_MINI32)     //K36
@@ -188,6 +209,22 @@
           Button BtnB = Button(130,240,70,40, true, "BtnB");
           Button BtnC = Button(230,240,80,40, true, "BtnC");
 
+        #elif defined (ARDUINO_TWatch)
+
+          M5Touch Touch;
+
+          // Buttons (global button and gesture functions)
+          M5Buttons Buttons;
+
+          // Default "button" that gets events where there is no button.
+          Button background = Button(0, 0, TOUCH_W, TOUCH_H, true, "background");
+
+          #define DEBOUNCE_MS 1
+          // Touch version of the buttons on older M5stack cores, below screen
+          Button BtnA = Button(10,240,110,40, true ,"BtnA");
+          Button BtnB = Button(130,240,70,40, true, "BtnB");
+          Button BtnC = Button(230,240,80,40, true, "BtnC");
+
         #elif defined (ARDUINO_ESP32_DEV) //M35 both with HW buttons and touchscreen
 
           #define DEBOUNCE_MS 10
@@ -195,7 +232,7 @@
           HWButton BtnB = HWButton(BUTTON_B_PIN, true, DEBOUNCE_MS);
           HWButton BtnC = HWButton(BUTTON_C_PIN, true, DEBOUNCE_MS);
 
-        #elif defined  (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3 // M5Stack_Core_ESP32, TTGO T4 v1.3, M5StickC/+
+        #elif defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_Piranha) // M5Stack_Core_ESP32, K45, TTGO T4 v1.3, K46
 
           #define DEBOUNCE_MS 10
           HWButton BtnA = HWButton(BUTTON_A_PIN, true, DEBOUNCE_MS);
@@ -211,18 +248,28 @@
 
         #endif
 
-        #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
+        #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
           POWER Power;
           void powerOFF() { Power.powerOFF(); } 
           void setPowerBoostKeepOn(bool en)  { Power.setPowerBoostKeepOn(en); }
           void setWakeupButton(uint8_t button) { Power.setWakeupButton(button); }
-          #ifdef MPU9250_INSDE
-            MPU9250 IMU = MPU9250();
-          #endif
+        #elif defined (ARDUINO_M5STACK_FIRE)
+          POWER Power;
+          void powerOFF() { Power.powerOFF(); } 
+          void setPowerBoostKeepOn(bool en)  { Power.setPowerBoostKeepOn(en); }
+          void setWakeupButton(uint8_t button) { Power.setWakeupButton(button); }
+          // #ifdef MPU9250_INSDE
+          //   MPU9250 IMU = MPU9250();
+          // #endif       
         #elif defined (ARDUINO_M5STACK_Core2)
           AXP192 Axp = AXP192();  //!Power
           BM8563 Rtc;  //!RTC!
           MPU6886 IMU = MPU6886(0x69);  //Your Core2 use 0x68! I moved it to 0x69 to use DS3231SN
+          void powerOFF() { Axp.PowerOff(); }
+          void powerOff() { Axp.PowerOff(); }
+        #elif defined (ARDUINO_TWatch)
+          AXP192 Axp = AXP192();  //!Power
+          BM8563 Rtc;  //!RTC!
           void powerOFF() { Axp.PowerOff(); }
           void powerOff() { Axp.PowerOff(); }
         #elif defined (ARDUINO_M5Stick_C) /* || defined (ARDUINO_M5Stick_C_Plus) */
@@ -242,6 +289,8 @@
           MAX7315 Ioe = MAX7315(/*MAX7315_I2C_ADDRESS*/);
           MPU6886 Imu = MPU6886(0x69);
           void powerOFF() { Ioe.powerOff(); }
+        #elif defined (ARDUINO_Piranha)     //K46
+          K46Bat Bat;
         #endif
 
         M5Display Lcd = M5Display();

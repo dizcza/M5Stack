@@ -15,7 +15,7 @@
   #define SLEEP_MIN(us) (((uint64_t)us) * 60L * 1000000L)
   #define SLEEP_HR(us) (((uint64_t)us) * 60L * 60L * 1000000L)
 
-  const uint8_t adrIP5306 = 0x21;
+  const uint8_t adrIP5306 = 0x75;
 
   class POWER
   {

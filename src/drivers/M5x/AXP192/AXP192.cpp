@@ -56,6 +56,56 @@ AXP192::AXP192() {
         SetBusPowerMode(mode);
     }
 
+#elif defined (ARDUINO_TWatch)
+
+    void AXP192::begin(mbus_mode_t mode /* = kMBusModeOutput */) {
+        log_w("[ AXP ]");
+        //AXP192 30H
+        Write1Byte(0x30, (Read8bit(0x30) & 0x04) | 0x02);
+        log_d("  - VBUS limit off");
+        //AXP192 GPIO1:OD OUTPUT
+        Write1Byte(0x92, Read8bit(0x92) & 0xF8);
+        log_d("  - GPIO1 init as output");
+        //AXP192 GPIO2:OD OUTPUT
+        Write1Byte(0x93, Read8bit(0x93) & 0xF8);
+        log_d("  - GPIO2 init as output");
+        //AXP192 RTC CHG
+        Write1Byte(0x35, (Read8bit(0x35) & 0x1C) | 0xA3);
+        log_w("  - RTC battery charging enabled");
+        SetESPVoltage(3350);
+        log_w("  - ESP32 power voltage was set to 3.35v");
+        SetLcdVoltage(2800);
+        log_w("  - TFT backlight voltage was set to 2.80v");
+        SetLDOVoltage(2, 3300); //Periph power voltage preset (LCD_logic, SD card)
+        log_w("  - TFT logic and SDCard voltage preset to 3.3v");
+        SetLDOVoltage(3, 2000); //Vibrator power voltage preset
+        log_w("  - Vibrator voltage preset to 2v");
+        SetLDOEnable(2, true);  //LCD_logic, SD card
+        //SetDCDC3(true); // LCD backlight
+        SetLed(false);
+        Write1Byte(0x33, 0xC0); //Bat charge voltage to 4.2, Current 100MA
+        //SetCHGCurrent(kCHG_100mA);
+        log_w("  - M5Go CHG Base current set to 100mA");
+        //SetAxpPriphPower(1);
+        //Serial.printf("axp: lcd_logic and sdcard power enabled\n\n");
+        pinMode(37, INPUT_PULLUP);  //To unify SetSleep
+        //AXP192 GPIO4
+        Write1Byte(0x95, (Read8bit(0x95) & 0x72) | 0x84);
+        log_d("  - GPIO4 init");
+        // 128ms power on, 4s power off
+        Write1Byte(0x36, 0x4C);
+        // Set ADC sample rate to 200hz
+        Write1Byte(0x84, 0b11110010);
+        // Set ADC to All Enable
+        Write1Byte(0x82, 0xFF);
+        SetLCDRSet(0);
+        delay(100);
+        SetLCDRSet(1);
+        delay(100);
+        // bus power mode kMBusModeOutput
+        SetBusPowerMode(mode);
+    }
+
 #elif defined (ARDUINO_M5Stick_C) || defined (ARDUINO_M5Stick_C_Plus)
 
     void AXP192::begin(bool disableLcdBl, bool disablePeriph, bool disableRTC, bool disableVibr) {  
@@ -276,6 +326,8 @@ void AXP192::StopCoulombcounter(void) { Write1Byte(0xB8, 0xC0); }
 void AXP192::ClearCoulombcounter(void) { Write1Byte(0xB8, Read8bit(0xB8) | 0x20); }   // Only set the Clear Flag
 // #if defined (ARDUINO_M5STACK_Core2)
 //     void AXP192::ClearCoulombcounter(void) { Write1Byte(0xB8, 0xA0); }
+// #elif defined (ARDUINO_TWatch)
+//     void AXP192::ClearCoulombcounter(void) { Write1Byte(0xB8, 0xA0); }
 // #elif defined (ARDUINO_M5Stick_C) || defined (ARDUINO_M5Stick_C_Plus)
 //     void AXP192::ClearCoulombcounter(void) { Write1Byte(0xB8, Read8bit(0xB8) | 0x20); }   // Only set the Clear Flag
 // #endif
@@ -385,6 +437,13 @@ uint16_t AXP192::GetVapsData(void) {
 }
 
 #if defined (ARDUINO_M5STACK_Core2)
+    void AXP192::SetSleep(void) {
+        Write1Byte(0x31 , Read8bit(0x31) | ( 1 << 3)); // Turn on short press to wake up
+        Write1Byte(0x90 , Read8bit(0x90) & 0xF8); // GPIO0 - floating in M5StickC/+, OD - M5Core2
+        Write1Byte(0x82, 0x00); // Disable ADCs
+        Write1Byte(0x12, Read8bit(0x12) & 0xA1); // Disable all outputs but DCDC1
+    }
+#elif defined (ARDUINO_TWatch)
     void AXP192::SetSleep(void) {
         Write1Byte(0x31 , Read8bit(0x31) | ( 1 << 3)); // Turn on short press to wake up
         Write1Byte(0x90 , Read8bit(0x90) & 0xF8); // GPIO0 - floating in M5StickC/+, OD - M5Core2
@@ -587,6 +646,68 @@ void AXP192::SetLDOEnable(uint8_t number, bool state) {
 }
 
 #if defined (ARDUINO_M5STACK_Core2)
+    void AXP192::SetLCDRSet(bool state) {
+        uint8_t reg_addr = 0x96;
+        uint8_t gpio_bit = 0x02;
+        uint8_t data;
+        data = Read8bit(reg_addr);
+        if (state) data |= gpio_bit;
+        else data &= ~gpio_bit;
+        Write1Byte(reg_addr, data);
+    }
+
+    // Select source for BUS_5V
+    // kMBusModeOutput : powered by USB or Battery
+    // kMBusModeInput  : powered by external input
+    void AXP192::SetBusPowerMode(mbus_mode_t mode) {
+        uint8_t data;
+        if (mode == kMBusModeOutput) {
+            // Set GPIO to 3.3V (LDO OUTPUT mode)
+            data = Read8bit(0x91);
+            Write1Byte(0x91, (data & 0x0F) | 0xF0);
+            // Set GPIO0 to LDO OUTPUT, pullup N_VBUSEN to disable VBUS supply from BUS_5V
+            data = Read8bit(0x90);
+            Write1Byte(0x90, (data & 0xF8) | 0x02);
+            // Set EXTEN to enable 5v boost
+            data = Read8bit(0x10);
+            Write1Byte(0x10, data | 0x04);
+        } else {
+            // Set EXTEN to disable 5v boost
+            data = Read8bit(0x10);
+            Write1Byte(0x10, data & ~0x04);
+            // Set GPIO0 to float, using enternal pulldown resistor to enable VBUS supply from BUS_5V
+            data = Read8bit(0x90);
+            Write1Byte(0x90, (data & 0xF8) | 0x07);
+        }
+    }
+
+    void AXP192::SetLcdVoltage(uint16_t voltage) {
+        if (voltage >= 2500 && voltage <= 3300) {
+            SetDCVoltage(2, voltage);
+        }
+    }
+
+    void AXP192::SetLed(uint8_t state) {
+        uint8_t reg_addr=0x94;
+        uint8_t data;
+        data=Read8bit(reg_addr);
+        if(state) data &= 0xFD;
+        else data |= 0x02;
+        Write1Byte(reg_addr, data);
+    }
+
+    //set led state(GPIO high active,set 1 to enable amplifier)
+    void AXP192::SetSpkEnable(uint8_t state) {
+        uint8_t reg_addr=0x94;
+        uint8_t gpio_bit=0x04;
+        uint8_t data;
+        data=Read8bit(reg_addr);
+        if(state) data |= gpio_bit;
+        else data &= ~gpio_bit;
+        Write1Byte(reg_addr, data);
+    }
+
+#elif defined (ARDUINO_TWatch)
     void AXP192::SetLCDRSet(bool state) {
         uint8_t reg_addr = 0x96;
         uint8_t gpio_bit = 0x02;

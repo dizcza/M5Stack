@@ -57,6 +57,24 @@ public:
        * GPIO4: LCD_RST
        */
       void  begin(mbus_mode_t mode = kMBusModeOutput);
+    #elif defined (ARDUINO_TWatch)
+      #define AXPWIRE Wire1
+      /**
+       * DCDC1: N/U
+       * DCDC2: Not used (but powered)
+       * DCDC3: ESP32(Can't close)
+       * LDO1: Can't control
+       * LDO2: Display backlight
+       * LDO3: Backplane power supply
+       * LDO4: S76/78G Backplane only
+       * RTC: Don't set GPIO1 as LDO
+       * GPIO0: N/U
+       * GPIO1: 
+       * GPIO2: 
+       * GPIO3: N/U
+       * GPIO4: 
+       */
+      void  begin(mbus_mode_t mode = kMBusModeOutput);
     #elif defined (ARDUINO_M5Stick_C) /* || defined (ARDUINO_M5Stick_C_Plus) */
       #define AXPWIRE Wire1
       /**
@@ -91,6 +109,8 @@ public:
        * GPIO4: LCD_RST
        */
       void  begin(mbus_mode_t mode = kMBusModeOutput, bool disableRTC = false, bool disableLcdBl = false, bool disablePeriph = false);
+    #else
+      #define AXPWIRE Wire
     #endif
 
     void ScreenBreath(uint8_t brightness);
@@ -102,6 +122,12 @@ public:
     void SetLDOEnable(uint8_t number, bool state);
     //Device specific settings
     #if defined (ARDUINO_M5STACK_Core2)
+      void SetLCDRSet(bool state);
+      void SetBusPowerMode(mbus_mode_t mode);
+      void SetLcdVoltage(uint16_t voltage);
+      void SetLed(uint8_t state);
+      void SetSpkEnable(uint8_t state);
+    #elif defined (ARDUINO_TWatch)
       void SetLCDRSet(bool state);
       void SetBusPowerMode(mbus_mode_t mode);
       void SetLcdVoltage(uint16_t voltage);

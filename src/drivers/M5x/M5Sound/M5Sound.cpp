@@ -4,7 +4,7 @@
 #include <FreeRTOS.h>
 #include <driver/i2s.h>
 #include "utility/Config.h"
-#if defined (ARDUINO_M5STACK_Core2)
+#if defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_TWatch)
   #include "drivers/M5x/AXP192/AXP192.h"
 #endif
 #if defined (ARDUINO_ESP32_DEV) //M35
@@ -90,6 +90,16 @@ void M5SoundClass::start() {
     i2s_set_dac_mode(I2S_DAC_CHANNEL_LEFT_EN);
     digitalWrite(SPEAKER_EN_PIN, HIGH);
   #elif defined (ARDUINO_M5STACK_Core2)
+    i2s_pin_config_t tx_pin_config= {
+      .bck_io_num = TX_BCLK,
+      .ws_io_num = TX_LRC,
+      .data_out_num = TX_DOUT,
+      .data_in_num = I2S_PIN_NO_CHANGE
+    };
+    i2s_set_pin(TX_DEV, &tx_pin_config);
+    // Turn on system speaker
+    AXP->SetSpkEnable(true);
+  #elif defined (ARDUINO_TWatch)
     i2s_pin_config_t tx_pin_config= {
       .bck_io_num = TX_BCLK,
       .ws_io_num = TX_LRC,
@@ -205,6 +215,8 @@ void M5SoundClass::amplifier(bool state, bool force /* = false */) {
     log_d("Audio amplifier on");
     #if defined (ARDUINO_M5STACK_Core2)
       AXP->SetSpkEnable(true);
+    #elif defined (ARDUINO_TWatch)
+      AXP->SetSpkEnable(true);
     #elif defined (ARDUINO_M5Stick_C) || defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
       digitalWrite(SPEAKER_EN_PIN, HIGH);
     #elif defined (ARDUINO_ESP32_DEV) //M35
@@ -216,6 +228,8 @@ void M5SoundClass::amplifier(bool state, bool force /* = false */) {
   if (!state && (_amp_on || force)) {
     log_d("Audio amplifier off");
     #if defined (ARDUINO_M5STACK_Core2)
+      AXP->SetSpkEnable(false);
+    #elif defined (ARDUINO_TWatch)
       AXP->SetSpkEnable(false);
     #elif defined (ARDUINO_M5Stick_C) || defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
       digitalWrite(SPEAKER_EN_PIN, LOW);
@@ -289,7 +303,6 @@ uint16_t Synth::read(int16_t* buffer, uint16_t size) {
       break;
     case SQUARE:
       for(uint16_t i = 0; i < size; i++) {
-        phase + (i * steps);
         buffer[i] = (phase + (i * steps) > 50 ? -1 : 1) * amplitude;
       }
       break;
