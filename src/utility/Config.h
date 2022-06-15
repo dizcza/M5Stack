@@ -47,6 +47,7 @@
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
 
+    #define PIN_VBAT_TEST     18  //not used
   #elif defined (ARDUINO_M5STACK_FIRE)  //K45
     #define BUTTON_A_PIN      39
     #define BUTTON_B_PIN      38

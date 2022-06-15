@@ -44,7 +44,7 @@ uint16_t K46Bat::readADC(){
     vBat /= 2;
     digitalWrite(PIN_VBAT_TEST, VBAT_TEST_OFF);
   }
-  Serial.print(" vBat "); Serial.print(vBat, HEX); Serial.print(" DEC "); Serial.println(vBat, DEC);
+  //Serial.print(" vBat "); Serial.print(vBat, HEX); Serial.print(" DEC "); Serial.println(vBat, DEC);
   return vBat;
 }
 
