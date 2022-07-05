@@ -161,7 +161,7 @@
   #define RX_DMA_BUF_LEN     128
 #elif defined (ARDUINO_Piranha) //K46 with MAX98357A
   #define TX_DEV               I2S_NUM_0
-  #define TX_DOUT             18
+  #define TX_DOARDUINO_FROG_ESP3218
   #define TX_BCLK             19
   #define TX_LRC              12
   #define TX_MODE              (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX)

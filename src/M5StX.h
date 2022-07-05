@@ -130,7 +130,7 @@
       // #include "drivers/M5x/M5Sound/M5Sound.h"
       // #include "SD.h"
       // #include "FS.h"
-    #elif defined (ARDUINO_Piranha) //piranha_esp-32  //K46
+    #elif defined (ARDUINO_FROG_ESP32) //piranha_esp-32  //K46
       #include "drivers/M5x/Button/Button.h"
       #include "drivers/M5x/K46Bat/K46Bat.h"
     #elif defined (ARDUINO_TWatch)  //2019+LoRa 868MHz
@@ -232,7 +232,7 @@
           HWButton BtnB = HWButton(BUTTON_B_PIN, true, DEBOUNCE_MS);
           HWButton BtnC = HWButton(BUTTON_C_PIN, true, DEBOUNCE_MS);
 
-        #elif defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_Piranha) // M5Stack_Core_ESP32, K45, TTGO T4 v1.3, K46
+        #elif defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_FROG_ESP32) // M5Stack_Core_ESP32, K45, TTGO T4 v1.3, K46
 
           #define DEBOUNCE_MS 10
           HWButton BtnA = HWButton(BUTTON_A_PIN, true, DEBOUNCE_MS);
@@ -289,7 +289,7 @@
           MAX7315 Ioe = MAX7315(/*MAX7315_I2C_ADDRESS*/);
           MPU6886 Imu = MPU6886(0x69);
           void powerOFF() { Ioe.powerOff(); }
-        #elif defined (ARDUINO_Piranha)     //K46
+        #elif defined (ARDUINO_FROG_ESP32)     //K46
           K46Bat Bat;
         #endif
 

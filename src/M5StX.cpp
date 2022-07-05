@@ -25,7 +25,7 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     Wire.begin(21, 22, 400000);
     Power.begin();
     // Sound.begin();
-  #elif defined (ARDUINO_Piranha)
+  #elif defined (ARDUINO_FROG_ESP32)
     Wire.begin(21, 22, 400000);
     Bat.begin();
   #elif defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3

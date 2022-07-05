@@ -87,7 +87,7 @@
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
 
-  #elif defined (ARDUINO_Piranha)
+  #elif defined (ARDUINO_FROG_ESP32)
     #define BUTTON_A_PIN      33
     #define BUTTON_B_PIN      13
     #define BUTTON_C_PIN       4
