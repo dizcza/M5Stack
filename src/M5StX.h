@@ -127,7 +127,6 @@
       // #if defined M5STACK_NODE
       //   #include "drivers/M5x/WM8978/WM8978.h"
       // #endif
-      // #include "drivers/M5x/M5Sound/M5Sound.h"
       // #include "SD.h"
       // #include "FS.h"
     #elif defined (ARDUINO_FROG_ESP32) //piranha_esp-32  //K46
@@ -146,7 +145,6 @@
       #include "drivers/M5x/AXP192/AXP192.h"
       #include "drivers/M5x/BM8563/BM8563.h"
       #include "drivers/M5x/MPU6886/MPU6886.h"
-      #include "drivers/M5x/M5Sound/M5Sound.h"
       #include "SD.h"
       #include "FS.h"
     #elif defined (ARDUINO_M5Stick_C) /*|| defined (ARDUINO_M5Stick_C_Plus) */
@@ -154,11 +152,9 @@
       #include "drivers/M5x/AXP192/AXP192.h"
       #include "drivers/M5x/BM8563/BM8563.h"
       #include "drivers/M5x/MPU6886/MPU6886.h"
-      #include "drivers/M5x/M5Sound/M5Sound.h"
     #elif defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
       #include "drivers/M5x/Button/Button.h"
       #include "drivers/M5x/IP5306/Power.h"
-      #include "drivers/M5x/M5Sound/M5Sound.h"
       #include "SD.h"
       #include "FS.h"
     #elif defined (ARDUINO_ESP32_DEV)     //M35
@@ -167,7 +163,6 @@
       //#include "drivers/M35/LTC2943/LTC2943.h"
       #include "drivers/M35/MAX7315/MAX7315.h"
       #include "drivers/M5x/WM8978/WM8978.h"
-      #include "drivers/M5x/M5Sound/M5Sound.h"
       #include "SD.h"
       #include "FS.h"
     #elif defined (ARDUINO_D1_MINI32)     //K36
@@ -232,7 +227,7 @@
           HWButton BtnB = HWButton(BUTTON_B_PIN, true, DEBOUNCE_MS);
           HWButton BtnC = HWButton(BUTTON_C_PIN, true, DEBOUNCE_MS);
 
-        #elif defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_FROG_ESP32) // M5Stack_Core_ESP32, K45, TTGO T4 v1.3, K46
+        #elif defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_FROG_ESP32) // M5Stack_Core_ESP32, TTGO T4 v1.3, K46
 
           #define DEBOUNCE_MS 10
           HWButton BtnA = HWButton(BUTTON_A_PIN, true, DEBOUNCE_MS);

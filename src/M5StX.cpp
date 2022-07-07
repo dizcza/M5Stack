@@ -24,7 +24,6 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
   #elif defined (ARDUINO_M5STACK_FIRE)
     Wire.begin(21, 22, 400000);
     Power.begin();
-    // Sound.begin();
   #elif defined (ARDUINO_FROG_ESP32)
     Wire.begin(21, 22, 400000);
     Bat.begin();
@@ -33,7 +32,6 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     Power.begin();
     pinMode(SPEAKER_EN_PIN, OUTPUT);
     digitalWrite(SPEAKER_EN_PIN, LOW);
-    Sound.begin();
   #elif defined (ARDUINO_M5STACK_Core2)
     Wire1.begin(21, 22, 400000);
     Axp.begin((mbus_mode_t)externalPower);
@@ -42,7 +40,6 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     Rtc.begin();
     Touch.begin();  // Touch begin after AXP begin. (Reset at the start of AXP)
     Wire.begin(32, 33, 400000);
-    Sound.begin();
   #elif defined (ARDUINO_TWatch)
     Wire.begin(21, 22, 400000);
     Wire1.begin(23, 32, 400000);
@@ -58,7 +55,6 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     pinMode(SPEAKER_EN_PIN, OUTPUT);
     digitalWrite(SPEAKER_EN_PIN, LOW);
     //Set Wire on HY2.0-4P ?
-    Sound.begin();
   #elif defined (ARDUINO_ESP32_DEV) //M35
     Wire.begin(21, 22, 400000);
     //Touch.begin();
@@ -67,7 +63,6 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     Ioe.begin();
     Ioe.initPins();
     Dac.begin();
-    Sound.begin();
   #elif defined (ARDUINO_D1_MINI32)  //K36
     Wire.begin(21, 22, 400000);
     Ioe.begin();
@@ -119,9 +114,6 @@ void M5StX::update() {
 	  M5.BtnB.read();
     M5.BtnC.read();
     //Buttons.update(); //Doesnot work with 3-button text entry!
-  #endif
-  #if defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_M5Stick_C) /*|| defined (ARDUINO_M5STACK_FIRE) */
-    Sound.update();
   #endif
   yield();
 }
