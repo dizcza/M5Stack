@@ -54,7 +54,7 @@ uint8_t HWButton::read(void) {
   static uint8_t pinVal;
 
   ms = millis();
-  #if defined (ARDUINO_ESP32_DEV) || defined (ARDUINO_FROG_ESP32)
+  #if defined (ARDUINO_ESP32_DEV) || defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)  // K46 || K46v2
     pinVal = digitalRead(_pin);
   #else
     pinVal = analogRead(_pin);

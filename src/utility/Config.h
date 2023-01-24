@@ -120,6 +120,40 @@
     #define RADIO_MOSI         2
 
     #define PIN_VBAT_TEST     18
+  #elif defined (ARDUINO_WESP32)
+    #define BUTTON_A_PIN      33
+    #define BUTTON_B_PIN      13
+    #define BUTTON_C_PIN       4
+
+    #define M5STACK
+    #define ILI9341_DRIVER
+    #define SPI_FREQUENCY      40000000
+    #define SPI_READ_FREQUENCY 20000000
+    #define DEFAULT_ROTATION   1
+    #define TFT_SDA_READ
+
+    #define TFT_CS            17
+    #define TFT_RST            5
+    #define TFT_DC            27
+    #define TFT_MOSI           2
+    #define TFT_SCLK          15
+    #define TFT_BL            14
+    #define TFT_MISO          16
+
+    #define BTN_BL            19
+
+    #define SD_ENABLE          0
+
+    // RA-1H/SX1276 - RadioHead names
+    #define RADIO_NSS         25
+    #define RADIO_RST         -1
+    #define RADIO_INT         36
+    #define RADIO_SCK         15
+    #define RADIO_MISO        16
+    #define RADIO_MOSI         2
+    #define RADIO_BUSY        39
+
+    #define PIN_VBAT_TEST     18
   #elif defined (ARDUINO_TWatch)
     #define ST7789_DRIVER
     #define SPI_FREQUENCY      27000000
