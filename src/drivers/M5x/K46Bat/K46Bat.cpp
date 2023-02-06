@@ -15,11 +15,11 @@ void K46Bat::begin(uint8_t deviceId) {
   Wire.beginTransmission(_deviceAddress);
   if(!Wire.endTransmission()) return;
   _deviceAddress = 0;
-  //Serial.println("MCP3021 not found");
+  //;;Serial.println("MCP3021 not found");
   pinMode(PIN_VBAT_TEST, OUTPUT);
   digitalWrite(PIN_VBAT_TEST, VBAT_TEST_OFF);
   adc1_config_width(ADC_WIDTH_BIT_12);
-  adc1_config_channel_atten(ADC1_CHANNEL_4, ADC_ATTEN_DB_11);
+  adc1_config_channel_atten(CHAN_VBAT_ADC, ADC_ATTEN_DB_11);
 }
 
 uint16_t K46Bat::readADC(){
@@ -32,19 +32,19 @@ uint16_t K46Bat::readADC(){
     for(int i = 0; Wire.available() > 0; i++) {
       data[i] = Wire.read();
     }
-    //Serial.print(data[0], HEX); Serial.print(" "); Serial.print(data[1], HEX);
+    //;;Serial.print(data[0], HEX); Serial.print(" "); Serial.print(data[1], HEX);
     vBat = (vBat | (data[0] & 0x0F)) << 6;
     data[1] = data[1] >> 2;
     vBat = vBat | data[1];
   } else {                        // no MCP3021
     digitalWrite(PIN_VBAT_TEST, VBAT_TEST_ON);
     delay(10);
-    vBat  = adc1_get_raw(ADC1_CHANNEL_4);
-    vBat += adc1_get_raw(ADC1_CHANNEL_4);
+    vBat  = adc1_get_raw(CHAN_VBAT_ADC);
+    vBat += adc1_get_raw(CHAN_VBAT_ADC);
     vBat /= 2;
     digitalWrite(PIN_VBAT_TEST, VBAT_TEST_OFF);
   }
-  //Serial.print(" vBat "); Serial.print(vBat, HEX); Serial.print(" DEC "); Serial.println(vBat, DEC);
+  //;;Serial.print(" vBat "); Serial.print(vBat, HEX); Serial.print(" DEC "); Serial.println(vBat, DEC);
   return vBat;
 }
 

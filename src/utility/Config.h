@@ -111,7 +111,7 @@
 
     #define SD_ENABLE          0
 
-    // RA-1H/SX1276 - RadioHead names
+    // SX1276 - RadioHead names
     #define RADIO_NSS         25
     #define RADIO_RST         -1
     #define RADIO_INT         36
@@ -120,6 +120,8 @@
     #define RADIO_MOSI         2
 
     #define PIN_VBAT_TEST     18
+    #define CHAN_VBAT_ADC     ADC1_CHANNEL_4
+
   #elif defined (ARDUINO_WESP32)
     #define BUTTON_A_PIN      33
     #define BUTTON_B_PIN      13
@@ -144,7 +146,7 @@
 
     #define SD_ENABLE          0
 
-    // RA-1H/SX1276 - RadioHead names
+    //SX1276 - RadioHead names
     #define RADIO_NSS         25
     #define RADIO_RST         -1
     #define RADIO_INT         36
@@ -154,6 +156,8 @@
     #define RADIO_BUSY        39
 
     #define PIN_VBAT_TEST     18
+    #define CHAN_VBAT_ADC     ADC1_CHANNEL_6
+
   #elif defined (ARDUINO_TWatch)
     #define ST7789_DRIVER
     #define SPI_FREQUENCY      27000000

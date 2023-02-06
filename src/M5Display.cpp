@@ -47,6 +47,7 @@ void M5Display::wakeup() {
 // M5Stack compatible range 0-255
 void M5Display::setBrightness(uint8_t brightness) {
   #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)  //TTGO T4 v1.3 || K46 || K46v2
+    ledcWrite(BLK_PWM_CHANNEL, brightness); // brightness 0-255
   #elif defined (ARDUINO_M5STACK_Core2)
     //AXP->SetLcdVoltage(brightness * 80 + 2500); //For M5ez
     AXP->SetLcdVoltage(brightness * 3 + 2530);  // brightness 0-255

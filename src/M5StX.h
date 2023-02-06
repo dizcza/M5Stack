@@ -89,6 +89,7 @@
  * UT2UH               2021/05/20        0.0.1          M35 rework created
  * UT2UH               2021/10/20        0.0.2          K46 support added
  * UT2UH               2022/01/05        0.0.3          TWatch support added
+ * UT2UH               2023/02/06        0.0.4          K46v2 support added
  * </pre>
  *
  */
@@ -129,10 +130,13 @@
       // #endif
       // #include "SD.h"
       // #include "FS.h"
-    #elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)  //K46 || K46v2
+    #elif defined (ARDUINO_FROG_ESP32)            //K46
       #include "drivers/M5x/Button/Button.h"
       #include "drivers/M5x/K46Bat/K46Bat.h"
-    #elif defined (ARDUINO_TWatch)  //2019+LoRa 868MHz
+    #elif defined (ARDUINO_WESP32)                //K46v2
+      #include "drivers/M5x/Button/Button.h"
+      #include "drivers/M5x/K46Bat/K46Bat.h"
+    #elif defined (ARDUINO_TWatch)                //2019+LoRa 868MHz
       #include "drivers/M5x/M5Touch/M5Touch.h"
       #include "drivers/M5x/M5Button/M5Button.h"	// M5Buttons, M5Events, Button, Gesture
       #include "drivers/M5x/AXP192/AXP192.h"
