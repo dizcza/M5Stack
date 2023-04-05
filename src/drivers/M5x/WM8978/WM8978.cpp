@@ -11,6 +11,9 @@ WM8978::WM8978() {
     if (!instance) instance = this;
 }
 
+
+static const char *TAG = "wm8978";
+
 // WM8978 register value buffer zone (total 58 registers 0 to 57), occupies 116 bytes of memory
 // Because the IIC WM8978 operation does not support read operations, so save all the register values in the local
 // Write WM8978 register, synchronized to the local register values, register read, register directly back locally stored value.

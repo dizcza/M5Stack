@@ -25,7 +25,7 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     Wire.begin(21, 22, 400000);
     Power.begin();
   #elif defined (ARDUINO_FROG_ESP32)  //K46
-    Wire.begin(21, 22, 400000);
+    Wire.begin(21, 22, (uint32_t) 400000);
     Bat.begin();
   #elif defined (ARDUINO_WESP32)      // K46v2
     Wire.begin(22, 21, 400000);

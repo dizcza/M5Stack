@@ -1,3 +1,5 @@
+#include <vector>
+
 #ifndef _M5DISPLAY_H_
   #define _M5DISPLAY_H_
 
