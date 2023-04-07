@@ -61,7 +61,7 @@ bool  WM8978::begin() {
 
 bool WM8978::begin(const uint8_t sda, const uint8_t scl, const uint32_t frequency) {
   ESP_LOGD(TAG, "i2c init sda=%i scl=%i frequency=%i", sda, scl, frequency);
-  if (!Wire.begin(sda, scl, frequency)) {
+  if (!Wire.begin((int) sda, (int) scl, frequency)) {
     ESP_LOGE(TAG, "Wire setup error sda=%i scl=%i frequency=%i", sda, scl, frequency);
     return false;
   }
