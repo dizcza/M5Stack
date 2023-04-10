@@ -3,7 +3,6 @@
 
   #include <vector>
   #include <Arduino.h>
-  #include <FS.h>
   #include <SPI.h>
 
   #include "utility/Config.h"
@@ -69,40 +68,11 @@
       void qrcode(const char *string, uint16_t x = 50, uint16_t y = 10, uint8_t width = 220, uint8_t version = 6);
       void qrcode(const String &string, uint16_t x = 50, uint16_t y = 10, uint8_t width = 220, uint8_t version = 6);
 
-      void drawBmp(fs::FS &fs, const char *path, uint16_t x, uint16_t y);
-      void drawBmpFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y);
-
       void drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t *data);
       void drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t *data);
       void drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, uint16_t *data);
       void drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, uint8_t *data);
       void drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t *data, uint16_t transparent);
-
-      void drawJpg(const uint8_t *jpg_data, size_t jpg_len, uint16_t x = 0,
-                  uint16_t y = 0, uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                  uint16_t offX = 0, uint16_t offY = 0,
-                  jpeg_div_t scale = JPEG_DIV_NONE);
-
-      void drawJpg(fs::FS &fs, const char *path, uint16_t x = 0, uint16_t y = 0,
-                    uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                    uint16_t offX = 0, uint16_t offY = 0,
-                    jpeg_div_t scale = JPEG_DIV_NONE);
-
-      void drawJpgFile(fs::FS &fs, const char *path, uint16_t x = 0, uint16_t y = 0,
-                    uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                    uint16_t offX = 0, uint16_t offY = 0,
-                    jpeg_div_t scale = JPEG_DIV_NONE);
-
-      void drawPngFile(fs::FS &fs, const char *path, uint16_t x = 0, uint16_t y = 0,
-                    uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                    uint16_t offX = 0, uint16_t offY = 0,
-                    double scale = 1.0, uint8_t alphaThreshold = 127);
-
-      void drawPngUrl(const char *url, uint16_t x = 0, uint16_t y = 0,
-                    uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                    uint16_t offX = 0, uint16_t offY = 0,
-                    double scale = 1.0, uint8_t alphaThreshold = 127);
-
     // Saves and restores font properties, datum, cursor and colors so
     // code can be non-invasive. Just make sure that every push is also
     // popped when you're done to prevent stack from growing.
