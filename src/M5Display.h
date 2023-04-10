@@ -1,8 +1,7 @@
-#include <vector>
-
 #ifndef _M5DISPLAY_H_
   #define _M5DISPLAY_H_
 
+  #include <vector>
   #include <Arduino.h>
   #include <FS.h>
   #include <SPI.h>
