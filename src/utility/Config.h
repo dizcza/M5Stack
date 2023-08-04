@@ -42,7 +42,7 @@
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS          5
     #define RADIO_RST         -1  //26
-    #define RADIO_INT         36
+    #define RADIO_P36         36
     #define RADIO_SCK         18
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
@@ -82,7 +82,7 @@
     // RFM95C - RadioHead names
     #define RADIO_NSS          5
     #define RADIO_RST         26
-    #define RADIO_INT         36
+    #define RADIO_P36         36
     #define RADIO_SCK         18
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
@@ -114,7 +114,7 @@
     // SX1276 - RadioHead names
     #define RADIO_NSS         25
     #define RADIO_RST         -1
-    #define RADIO_INT         36
+    #define RADIO_P36         36
     #define RADIO_SCK         15
     #define RADIO_MISO        16
     #define RADIO_MOSI         2
@@ -149,11 +149,11 @@
     //SX1276 - RadioHead names
     #define RADIO_NSS         25
     #define RADIO_RST         -1
-    #define RADIO_INT         36
+    #define RADIO_P36         36
     #define RADIO_SCK         15
     #define RADIO_MISO        16
     #define RADIO_MOSI         2
-    #define RADIO_BUSY        39
+    #define RADIO_P39         39
 
     #define PIN_VBAT_TEST     18
     #define CHAN_VBAT_ADC     ADC1_CHANNEL_6
@@ -193,7 +193,7 @@
     // TTGO LoRa/SX1276 - RadioHead names
     #define RADIO_NSS         13
     #define RADIO_RST         25
-    #define RADIO_INT         26
+    #define RADIO_P36         26
     #define RADIO_SCK         14
     #define RADIO_MISO        2
     #define RADIO_MOSI        15
@@ -230,7 +230,7 @@
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS         26
     #define RADIO_RST         -1
-    #define RADIO_INT         36
+    #define RADIO_P36         36
     #define RADIO_SCK         18
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
@@ -329,7 +329,7 @@
 
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS         33
-    #define RADIO_INT         36
+    #define RADIO_P36         36
     #define RADIO_SCK         18
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
@@ -371,7 +371,7 @@
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS         17
     #define RADIO_RST         -1
-    #define RADIO_INT         36
+    #define RADIO_P36         36
     #define RADIO_SCK         18
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
