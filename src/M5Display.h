@@ -4,6 +4,7 @@
   #include <Arduino.h>
   #include <FS.h>
   #include <SPI.h>
+  #include <vector>
 
   #include "utility/Config.h"
   #include "utility/In_eSPI.h"
