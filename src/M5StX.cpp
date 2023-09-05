@@ -24,12 +24,12 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
   #elif defined (ARDUINO_M5STACK_FIRE)
     Wire.begin(21, 22, 400000);
     Power.begin();
-  #elif defined (ARDUINO_FROG_ESP32)  //K46
+  #elif defined (ARDUINO_FROG_ESP32)  //K46v4
     Wire.begin(21, 22, 400000);
     Bat.begin();
-  #elif defined (ARDUINO_WESP32)      
-    //Wire.begin(22, 21, 400000); // K46v2
-    Wire.begin(21, 22, 400000); // K46v4
+  #elif defined (ARDUINO_WESP32)      // K46v1
+    Wire.begin(21, 22, 400000);
+    Bat.begin();
   #elif defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
     Wire.begin(21, 22, 400000);
     Power.begin();
@@ -79,9 +79,9 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
 
   #if defined (ARDUINO_M5Stack_Core_ESP32)
     // TF Card
-    // if (SDEnable == true) {
-    //   SD.begin(TFCARD_CS_PIN, SPI, 40000000);
-    // }
+    if (SDEnable == true) {
+      SD.begin(TFCARD_CS_PIN, SPI, 40000000);
+    }
   #elif defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_M5STACK_FIRE)
     // TF Card
     if (SDEnable == true) {

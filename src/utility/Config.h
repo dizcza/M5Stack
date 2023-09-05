@@ -32,17 +32,17 @@
     #define TFT_RST           33
 
     #define SD_ENABLE          0
-    // #define TFCARD_CS_PIN      4
-    // #define TFCARD_MISO_PIN    2
-    // #define TFCARD_MOSI_PIN   15
-    // #define TFCARD_SCLK_PIN   14
+    #define TFCARD_CS_PIN      4
+    #define TFCARD_MISO_PIN    2
+    #define TFCARD_MOSI_PIN   15
+    #define TFCARD_SCLK_PIN   14
 
     // #define SPEAKER_PIN       25
 
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS          5
     #define RADIO_RST         -1  //26
-    #define RADIO_P36         36
+    #define RADIO_INT         36
     #define RADIO_SCK         18
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
@@ -82,12 +82,12 @@
     // RFM95C - RadioHead names
     #define RADIO_NSS          5
     #define RADIO_RST         26
-    #define RADIO_P36         36
+    #define RADIO_INT         36
     #define RADIO_SCK         18
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
 
-  #elif defined (ARDUINO_FROG_ESP32)
+  #elif defined (ARDUINO_WESP32)  //K46v1
     #define BUTTON_A_PIN      33
     #define BUTTON_B_PIN      13
     #define BUTTON_C_PIN       4
@@ -114,7 +114,7 @@
     // SX1276 - RadioHead names
     #define RADIO_NSS         25
     #define RADIO_RST         -1
-    #define RADIO_P36         36
+    #define RADIO_INT         36
     #define RADIO_SCK         15
     #define RADIO_MISO        16
     #define RADIO_MOSI         2
@@ -122,7 +122,7 @@
     #define PIN_VBAT_TEST     18
     #define CHAN_VBAT_ADC     ADC1_CHANNEL_4
 
-  #elif defined (ARDUINO_WESP32)
+  #elif defined (ARDUINO_FROG_ESP32)  //K46v4
     #define BUTTON_A_PIN      33
     #define BUTTON_B_PIN      13
     #define BUTTON_C_PIN       4
@@ -147,13 +147,11 @@
     #define SD_ENABLE          0
 
     //SX1276 - RadioHead names
-    #define RADIO_NSS         25
     #define RADIO_RST         -1
-    #define RADIO_P36         36
+    #define RADIO_NSS         25
     #define RADIO_SCK         15
     #define RADIO_MISO        16
     #define RADIO_MOSI         2
-    #define RADIO_P39         39
 
     #define PIN_VBAT_TEST     18
     #define CHAN_VBAT_ADC     ADC1_CHANNEL_6
@@ -193,7 +191,7 @@
     // TTGO LoRa/SX1276 - RadioHead names
     #define RADIO_NSS         13
     #define RADIO_RST         25
-    #define RADIO_P36         26
+    #define RADIO_INT         26
     #define RADIO_SCK         14
     #define RADIO_MISO        2
     #define RADIO_MOSI        15
@@ -230,7 +228,7 @@
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS         26
     #define RADIO_RST         -1
-    #define RADIO_P36         36
+    #define RADIO_INT         36
     #define RADIO_SCK         18
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
@@ -329,7 +327,7 @@
 
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS         33
-    #define RADIO_P36         36
+    #define RADIO_INT         36
     #define RADIO_SCK         18
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
@@ -371,7 +369,7 @@
     // RA-1H/SX1276 - RadioHead names
     #define RADIO_NSS         17
     #define RADIO_RST         -1
-    #define RADIO_P36         36
+    #define RADIO_INT         36
     #define RADIO_SCK         18
     #define RADIO_MISO        19
     #define RADIO_MOSI        23
