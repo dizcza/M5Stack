@@ -1,5 +1,5 @@
 
-
+#ifndef ARDUINO_M5Stack_Core_ESP32
 #include "K46Bat.h"
 #include "M5StX.h"
 #include <driver/adc.h>
@@ -82,3 +82,4 @@ int8_t K46Bat::getBatteryLevel() {
   //Serial.print(" batLevel "); Serial.println(batLevel, DEC);
   return batLevel;
 }
+#endif

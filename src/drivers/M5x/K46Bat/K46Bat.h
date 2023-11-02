@@ -1,5 +1,6 @@
 #ifndef K46BAT_H
   #define K46BAT_H
+  #ifndef ARDUINO_M5Stack_Core_ESP32
   #include <Arduino.h>
 
   #define VBAT_TEST_ON  HIGH
@@ -28,4 +29,5 @@
         int _deviceAddress; // calculated device address using deviceID and constant mcp3021Adress
         uint16_t _vBatOld = 0;
   };
+  #endif
 #endif
