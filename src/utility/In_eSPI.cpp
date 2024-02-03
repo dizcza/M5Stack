@@ -1322,11 +1322,12 @@ void TFT_eSPI::init(uint8_t tc)
   } // end of: if just _booted
 
   // Toggle RST low to reset
+  bool lcd_version = false;
 #ifdef TFT_RST
   #ifdef M5STACK
     pinMode(TFT_RST, INPUT_PULLDOWN);
     delay(1);
-    bool lcd_version = digitalRead(TFT_RST);
+    lcd_version = digitalRead(TFT_RST);
     pinMode(TFT_RST, OUTPUT);
   #else
     pinMode(TFT_RST, OUTPUT);

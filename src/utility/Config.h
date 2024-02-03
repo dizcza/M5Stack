@@ -121,6 +121,44 @@
 
     #define PIN_VBAT_TEST     18
     #define CHAN_VBAT_ADC     ADC1_CHANNEL_4
+  
+  #elif defined (ARDUINO_TTGO_T1)
+    #define BUTTON_A_PIN      5
+    #define BUTTON_B_PIN      5
+    #define BUTTON_C_PIN      5
+
+    #define M5STACK
+    #define ILI9341_DRIVER
+    #define SPI_FREQUENCY      40000000
+    #define SPI_READ_FREQUENCY 20000000
+    #define DEFAULT_ROTATION   1
+    #define TFT_SDA_READ
+
+    #define TFT_CS            27
+    #undef TFT_RST
+    #define TFT_DC            26
+    #define TFT_MOSI          15
+    #define TFT_SCLK          14
+    #define TFT_BL            4
+    #define TFT_MISO          2
+
+    #undef BTN_BL
+
+    #define SD_ENABLE          0
+    #define TFCARD_CS_PIN      13
+    #define TFCARD_MISO_PIN    TFT_MISO
+    #define TFCARD_MOSI_PIN    TFT_MOSI
+    #define TFCARD_SCLK_PIN    TFT_SCLK
+
+    //SX1276 - RadioHead names
+    #define RADIO_RST         -1
+    #define RADIO_NSS         12
+    #define RADIO_SCK         TFT_SCLK
+    #define RADIO_MISO        TFT_MISO
+    #define RADIO_MOSI        TFT_MOSI
+
+    #define PIN_VBAT_TEST     35
+    #define CHAN_VBAT_ADC     ADC1_CHANNEL_7
 
   #elif defined (ARDUINO_FROG_ESP32)  //K46v4
     #define BUTTON_A_PIN      33

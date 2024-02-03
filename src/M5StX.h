@@ -130,7 +130,7 @@
       // #endif
       // #include "SD.h"
       // #include "FS.h"
-    #elif defined (ARDUINO_FROG_ESP32)            //K46v4
+    #elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_TTGO_T1)            //K46v4
       #include "drivers/M5x/Button/Button.h"
       #include "drivers/M5x/K46Bat/K46Bat.h"
     #elif defined (ARDUINO_WESP32)                //K46v1
@@ -231,7 +231,7 @@
           HWButton BtnB = HWButton(BUTTON_B_PIN, true, DEBOUNCE_MS);
           HWButton BtnC = HWButton(BUTTON_C_PIN, true, DEBOUNCE_MS);
 
-        #elif defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)  // M5Stack_Core_ESP32, TTGO T4 v1.3, K46v4, K46v1
+        #elif defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)  || defined (ARDUINO_TTGO_T1)  // M5Stack_Core_ESP32, TTGO T4 v1.3, K46v4, K46v1
 
           #define DEBOUNCE_MS 10
           HWButton BtnA = HWButton(BUTTON_A_PIN, true, DEBOUNCE_MS);
@@ -288,7 +288,7 @@
           MAX7315 Ioe = MAX7315(/*MAX7315_I2C_ADDRESS*/);
           MPU6886 Imu = MPU6886(0x69);
           void powerOFF() { Ioe.powerOff(); }
-        #elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)  // K46v4 || K46v1
+        #elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32) || defined (ARDUINO_TTGO_T1)  // K46v4 || K46v1
           K46Bat Bat;
         #endif
 
