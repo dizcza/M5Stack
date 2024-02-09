@@ -4,7 +4,13 @@
 #include "M5StX.h"
 
 
-M5StX::M5StX() : isInited(0) { }
+M5StX::M5StX() : isInited(0)
+#if defined(ARDUINO_TTGO_T1)
+ , BtnA(MCPMan, MCP_EXPANDER_BTN_A_PIN, true)
+ , BtnB(MCPMan, MCP_EXPANDER_BTN_B_PIN, true)
+ , BtnC(MCPMan, MCP_EXPANDER_BTN_C_PIN, true)
+#endif
+ { }
 
 void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externalPower) {
   if (isInited == true) {
@@ -31,6 +37,7 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     Wire.begin(21, 22, (uint32_t) 400000);
     Wire1.begin(32, 33, (uint32_t) 400000);
     Bat.begin();
+    MCPMan.begin();
   #elif defined (ARDUINO_WESP32)      // K46v1
     Wire.begin(21, 22, 400000);
     Bat.begin();

@@ -10,15 +10,16 @@
  *----------------------------------------------------------------------*/
 #ifndef HWButton_h
 #define HWButton_h
-// #if ARDUINO >= 100
+
 #include <Arduino.h>
-// #else
-// #include <WProgram.h>
-// #endif
-class HWButton {
+#include "MCPXManager.h"
+
+
+class ButtonGeneral {
   public:
-    HWButton(uint8_t pin, uint8_t invert, uint32_t dbTime);
-    uint8_t read();
+    ButtonGeneral(uint8_t pin, uint8_t invert);
+    virtual ~ButtonGeneral() {};
+    virtual uint8_t read() = 0;
     uint8_t isPressed();
     uint8_t isReleased();
     uint8_t wasPressed();
@@ -29,9 +30,8 @@ class HWButton {
     uint8_t wasReleasefor(uint32_t ms);
     uint32_t lastChange();
 
-  private:
+  protected:
     uint8_t _pin;           //arduino pin number
-    uint8_t _puEnable;      //internal pullup resistor enabled
     uint8_t _invert;        //if 0, interpret high state as pressed, else interpret low state as pressed
     uint8_t _state;         //current button state
     uint8_t _lastState;     //previous button state
@@ -40,8 +40,30 @@ class HWButton {
     uint32_t _lastTime;     //time of previous state
     uint32_t _lastChange;   //time of last state change
     uint32_t _lastLongPress;   //time of last state change
-    uint32_t _dbTime;       //debounce time
     uint32_t _pressTime;    //press time
     uint32_t _hold_time;    //hold time call wasreleasefor
 };
+
+class HWButton : public ButtonGeneral {
+  public:
+    HWButton(uint8_t pin, uint8_t invert, uint32_t dbTime);
+    uint8_t read();
+
+  protected:
+    uint32_t _dbTime;       //debounce time
+};
+
+
+class MCPBtn : public ButtonGeneral {
+  public:
+    MCPBtn(MCPXManager& mcpMan, uint8_t pin, uint8_t invert);
+    uint8_t read();
+
+  protected:
+    MCPXManager& mcpMan;
+
+    bool stateChanged(uint16_t val1, uint16_t val2);
+};
+
+
 #endif
