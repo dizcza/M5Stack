@@ -32,6 +32,7 @@ class MCPXManager {
         void begin();
         void enableLoRa(uint8_t rstPin = MCP_EXPANDER_LORA_RST_PIN);
         void enableTFT(uint8_t rstPin = MCP_EXPANDER_TFT_RST_PIN, uint8_t blPin = MCP_EXPANDER_TFT_BL_PIN);
+        void wakeUpGPS(uint8_t extintPin = MCP_EXPANDER_GPS_EXTINT_PIN);
         void registerButton(uint8_t pin);  // delayed button initialization
 
     protected:

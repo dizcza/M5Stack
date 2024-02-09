@@ -29,21 +29,31 @@ std::pair<uint16_t, uint16_t> MCPXManager::read() {
 }
 
 
+void MCPXManager::wakeUpGPS(uint8_t extintPin) {
+    mcpx.digitalWrite(extintPin, 0);
+    delay(1000);
+    mcpx.digitalWrite(extintPin, 1);
+    delay(1000);
+    mcpx.digitalWrite(extintPin, 0);
+    log_d("GPS woken");
+}
+
+
 void MCPXManager::registerButton(uint8_t pin) {
     btnPins.push_back(pin);
 }
 
-
-void MCPXManager::enableLoRa(uint8_t rstPin) {
-   mcpx.digitalWrite(rstPin, 0);
-   delay(100);
-   mcpx.digitalWrite(rstPin, 1);
+void MCPXManager::enableLoRa(uint8_t rstPin)
+{
+    mcpx.digitalWrite(rstPin, 0);
+    delay(100);
+    mcpx.digitalWrite(rstPin, 1);
 }
 
-
-void MCPXManager::enableTFT(uint8_t rstPin, uint8_t blPin) {
-   mcpx.digitalWrite(rstPin, 0);
-   delay(100);
-   mcpx.digitalWrite(rstPin, 1);
-   mcpx.digitalWrite(blPin, 1);
+void MCPXManager::enableTFT(uint8_t rstPin, uint8_t blPin)
+{
+    mcpx.digitalWrite(rstPin, 0);
+    delay(100);
+    mcpx.digitalWrite(rstPin, 1);
+    mcpx.digitalWrite(blPin, 1);
 }
