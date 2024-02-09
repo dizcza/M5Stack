@@ -130,9 +130,12 @@
       // #endif
       // #include "SD.h"
       // #include "FS.h"
-    #elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_TTGO_T1)            //K46v4
+    #elif defined (ARDUINO_FROG_ESP32)            //K46v4
       #include "drivers/M5x/Button/Button.h"
       #include "drivers/M5x/K46Bat/K46Bat.h"
+    #elif defined (ARDUINO_TTGO_T1)
+      #include "drivers/M5x/Button/Button.h"
+      #include "drivers/M5x/GPIOBat/GPIOBat.h"
     #elif defined (ARDUINO_WESP32)                //K46v1
       #include "drivers/M5x/Button/Button.h"
       #include "drivers/M5x/K46Bat/K46Bat.h"
@@ -296,8 +299,10 @@
           MAX7315 Ioe = MAX7315(/*MAX7315_I2C_ADDRESS*/);
           MPU6886 Imu = MPU6886(0x69);
           void powerOFF() { Ioe.powerOff(); }
-        #elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32) || defined (ARDUINO_TTGO_T1)  // K46v4 || K46v1
+        #elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)  // K46v4 || K46v1
           K46Bat Bat;
+        #elif defined (ARDUINO_TTGO_T1)
+          GPIOBat Bat = GPIOBat(35);
         #endif
 
         M5Display Lcd = M5Display();

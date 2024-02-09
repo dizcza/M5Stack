@@ -157,8 +157,8 @@
     #define RADIO_MISO        TFT_MISO
     #define RADIO_MOSI        TFT_MOSI
 
-    #define PIN_VBAT_TEST     35
-    #define CHAN_VBAT_ADC     ADC1_CHANNEL_7
+    #undef PIN_VBAT_TEST
+    #undef CHAN_VBAT_ADC
 
   #elif defined (ARDUINO_FROG_ESP32)  //K46v4
     #define BUTTON_A_PIN      33

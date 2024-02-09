@@ -36,7 +36,6 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
   #elif defined (ARDUINO_TTGO_T1)
     Wire.begin(21, 22, (uint32_t) 400000);
     Wire1.begin(32, 33, (uint32_t) 400000);
-    Bat.begin();
     MCPMan.begin();
   #elif defined (ARDUINO_WESP32)      // K46v1
     Wire.begin(21, 22, 400000);
