@@ -1,6 +1,5 @@
 
 #include "GPIOBat.h"
-#include <driver/adc.h>
 
 
 GPIOBat::GPIOBat(uint8_t pin) : pin(pin) {
@@ -27,13 +26,13 @@ bool GPIOBat::isCharging()
 bool GPIOBat::isChargeFull()
 {
     uint16_t vBat = readADC();
-    return vBat >= VBAT_ADC_FULL;
+    return vBat >= GPIOBat_VBAT_ADC_FULL;
 }
 
 // Return percentage * 100
 int8_t GPIOBat::getBatteryLevel() {
   uint16_t vBat = readADC();
-  float battLevelFloat = ((vBat - VBAT_ADC_MIN) * 100.0f) / (float) (VBAT_ADC_MAX - VBAT_ADC_MIN);
+  float battLevelFloat = ((vBat - GPIOBat_VBAT_ADC_MIN) * 100.0f) / (float) (GPIOBat_VBAT_ADC_MAX - GPIOBat_VBAT_ADC_MIN);
   int8_t batLevel = std::min((int8_t) 100, std::max((int8_t) 0, (int8_t) battLevelFloat));
   return batLevel;
 }

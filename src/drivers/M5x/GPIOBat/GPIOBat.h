@@ -2,11 +2,9 @@
 
 #include <Arduino.h>
 
-#define VBAT_TEST_ON HIGH
-#define VBAT_TEST_OFF LOW
-#define VBAT_ADC_MAX 4100
-#define VBAT_ADC_FULL 4100
-#define VBAT_ADC_MIN 1900
+#define GPIOBat_VBAT_ADC_MAX    4100
+#define GPIOBat_VBAT_ADC_FULL   4100
+#define GPIOBat_VBAT_ADC_MIN    1900
 
 class GPIOBat
 {

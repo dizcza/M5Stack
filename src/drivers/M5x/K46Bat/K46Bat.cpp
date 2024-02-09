@@ -1,20 +1,9 @@
 
-#ifndef ARDUINO_M5Stack_Core_ESP32
 #include "K46Bat.h"
 #include "M5StX.h"
 #include <driver/adc.h>
 
-#ifndef PIN_VBAT_TEST
-#pragma message("PIN_VBAT_TEST not defined, setting 0")
-#define PIN_VBAT_TEST   0
-#endif  /* PIN_VBAT_TEST */
-
-#ifndef CHAN_VBAT_ADC
-#pragma message("CHAN_VBAT_ADC not defined, setting ADC1_CHANNEL_4")
-#define CHAN_VBAT_ADC   ADC1_CHANNEL_4
-#endif  /* CHAN_VBAT_ADC */
-
-extern M5StX M5;
+#if defined (PIN_VBAT_TEST) && defined (CHAN_VBAT_ADC)
 
 K46Bat::K46Bat() {
 }
@@ -92,4 +81,5 @@ int8_t K46Bat::getBatteryLevel() {
   //Serial.print(" batLevel "); Serial.println(batLevel, DEC);
   return batLevel;
 }
-#endif
+
+#endif  /* PIN_VBAT_TEST */
