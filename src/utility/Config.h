@@ -152,7 +152,8 @@
 
     //SX1276 - RadioHead names
     #define RADIO_RST         -1
-    #define RADIO_NSS         12
+    #define RADIO_NSS         25
+    #define RADIO_INT         12
     #define RADIO_SCK         TFT_SCLK
     #define RADIO_MISO        TFT_MISO
     #define RADIO_MOSI        TFT_MOSI
@@ -187,6 +188,7 @@
     //SX1276 - RadioHead names
     #define RADIO_RST         -1
     #define RADIO_NSS         25
+    #define RADIO_INT         36
     #define RADIO_SCK         15
     #define RADIO_MISO        16
     #define RADIO_MOSI         2
