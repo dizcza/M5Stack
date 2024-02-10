@@ -2,7 +2,6 @@
 
 
 MCPBtn::MCPBtn(MCPXManager& mcpMan, uint8_t pin, uint8_t invert) : ButtonGeneral(pin, invert), mcpMan(mcpMan) {
-    mcpMan.registerButton(pin);
 }
 
 bool MCPBtn::stateChanged(uint16_t val1, uint16_t val2) {

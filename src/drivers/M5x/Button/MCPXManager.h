@@ -34,13 +34,11 @@ class MCPXManager {
         void enableTFT();   // reset TFT
         void enableTFT_BL(bool enable);
         void wakeUpGPS();
-        void registerButton(uint8_t pin);  // delayed button initialization
 
     protected:
         uint32_t dbTime;
         uint32_t lastReadMs;
         std::pair<uint16_t, uint16_t> state;
-    
-    private:
-        std::vector<uint8_t> btnPins;   // cleared on begin()
+
+        void configurePins();
 };
