@@ -9,11 +9,16 @@ MCPXManager::MCPXManager(uint8_t address, TwoWire& bus, uint32_t dbTime) : mcpx(
 
 void MCPXManager::begin() {
     mcpx.begin();
+    mcpx.pinMode(MCP_EXPANDER_LORA_RST_PIN, 0);
+    mcpx.pinMode(MCP_EXPANDER_TFT_RST_PIN, 0);
+    mcpx.pinMode(MCP_EXPANDER_TFT_BL_PIN, 0);
     for (uint8_t pin : btnPins) {
         mcpx.pinMode(pin, 1);  // set as input
         log_i("MCP23017: set pin %d as button input", pin);
     }
     btnPins.clear();
+    enableTFT();
+    enableLoRa();
 }
 
 
@@ -29,12 +34,12 @@ std::pair<uint16_t, uint16_t> MCPXManager::read() {
 }
 
 
-void MCPXManager::wakeUpGPS(uint8_t extintPin) {
-    mcpx.digitalWrite(extintPin, 0);
+void MCPXManager::wakeUpGPS() {
+    mcpx.digitalWrite(MCP_EXPANDER_GPS_EXTINT_PIN, 0);
     delay(1000);
-    mcpx.digitalWrite(extintPin, 1);
+    mcpx.digitalWrite(MCP_EXPANDER_GPS_EXTINT_PIN, 1);
     delay(1000);
-    mcpx.digitalWrite(extintPin, 0);
+    mcpx.digitalWrite(MCP_EXPANDER_GPS_EXTINT_PIN, 0);
     log_d("GPS woken");
 }
 
@@ -43,17 +48,17 @@ void MCPXManager::registerButton(uint8_t pin) {
     btnPins.push_back(pin);
 }
 
-void MCPXManager::enableLoRa(uint8_t rstPin)
+void MCPXManager::enableLoRa()
 {
-    mcpx.digitalWrite(rstPin, 0);
+    mcpx.digitalWrite(MCP_EXPANDER_LORA_RST_PIN, 0);
     delay(100);
-    mcpx.digitalWrite(rstPin, 1);
+    mcpx.digitalWrite(MCP_EXPANDER_LORA_RST_PIN, 1);
 }
 
-void MCPXManager::enableTFT(uint8_t rstPin, uint8_t blPin)
+void MCPXManager::enableTFT()
 {
-    mcpx.digitalWrite(rstPin, 0);
+    mcpx.digitalWrite(MCP_EXPANDER_TFT_RST_PIN, 0);
     delay(100);
-    mcpx.digitalWrite(rstPin, 1);
-    mcpx.digitalWrite(blPin, 1);
+    mcpx.digitalWrite(MCP_EXPANDER_TFT_RST_PIN, 1);
+    mcpx.digitalWrite(MCP_EXPANDER_TFT_BL_PIN, 1);
 }

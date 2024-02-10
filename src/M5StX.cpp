@@ -116,6 +116,8 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     pinMode(RTC_IRQ_PIN, INPUT);
     pinMode(IOE_IRQ_PIN, INPUT);
   #endif
+
+  log_d("M5 begin completed");
 }
 
 void M5StX::update() {
