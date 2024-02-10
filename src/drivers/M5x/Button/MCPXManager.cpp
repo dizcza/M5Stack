@@ -60,5 +60,9 @@ void MCPXManager::enableTFT()
     mcpx.digitalWrite(MCP_EXPANDER_TFT_RST_PIN, 0);
     delay(100);
     mcpx.digitalWrite(MCP_EXPANDER_TFT_RST_PIN, 1);
-    mcpx.digitalWrite(MCP_EXPANDER_TFT_BL_PIN, 1);
+    enableTFT_BL(true);
+}
+
+void MCPXManager::enableTFT_BL(bool enable) {
+    mcpx.pinMode(MCP_EXPANDER_TFT_BL_PIN, enable);
 }

@@ -30,8 +30,9 @@ class MCPXManager {
         MCPXManager(uint8_t address = MCP23017_I2C_ADDRESS, TwoWire& bus = Wire, uint32_t dbTime = 10);
         std::pair<uint16_t, uint16_t> read();
         void begin();
-        void enableLoRa();
-        void enableTFT();
+        void enableLoRa();  // reset LoRa
+        void enableTFT();   // reset TFT
+        void enableTFT_BL(bool enable);
         void wakeUpGPS();
         void registerButton(uint8_t pin);  // delayed button initialization
 
