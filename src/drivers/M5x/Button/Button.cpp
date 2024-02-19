@@ -31,7 +31,7 @@
 ButtonGeneral::ButtonGeneral(uint8_t pin, uint8_t invert) {
   _pin = pin;
   _invert = invert;
-  _state = 0;
+  _state = invert;
   _time = millis();
   _lastState = _state;
   _changed = 0;
