@@ -22,6 +22,8 @@ uint8_t MCPBtn::read(void) {
   _lastTime = _time;
   _time = ms;
 
+  // Debounce: check if the state hasn't been changed in 10 ms
+  // and also check that the new state != old state of this button
   if (stateChanged(val_pair.first, val_pair.second)) {
     _changed = 1;
     _lastChange = ms;

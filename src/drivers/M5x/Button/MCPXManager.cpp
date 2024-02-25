@@ -12,6 +12,7 @@ void MCPXManager::begin() {
     configurePins();
     enableTFT();
     enableLoRa();
+    enableGPS();
 }
 
 
@@ -50,6 +51,14 @@ void MCPXManager::wakeUpGPS() {
     delay(1000);
     mcpx.digitalWrite(MCP_EXPANDER_GPS_EXTINT_PIN, 0);
     log_d("GPS woken");
+}
+
+
+void MCPXManager::enableGPS() {
+    mcpx.digitalWrite(MCP_EXPANDER_GPS_RST_PIN, 0);
+    delay(100);
+    mcpx.digitalWrite(MCP_EXPANDER_GPS_RST_PIN, 1);
+    mcpx.digitalWrite(MCP_EXPANDER_GPS_EXTINT_PIN, 0);
 }
 
 

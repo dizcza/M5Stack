@@ -30,10 +30,11 @@ class MCPXManager {
         MCPXManager(uint8_t address = MCP23017_I2C_ADDRESS, TwoWire& bus = Wire, uint32_t dbTime = 10);
         std::pair<uint16_t, uint16_t> read();
         void begin();
-        void enableLoRa();  // reset LoRa
-        void enableTFT();   // reset TFT
-        void enableTFT_BL(bool enable);
-        void wakeUpGPS();
+        void enableLoRa();                 // reset LoRa
+        void enableTFT();                  // reset TFT
+        void enableTFT_BL(bool enable);    // enable TFT backlight
+        void enableGPS();                  // reset GPS
+        void wakeUpGPS();                  // toggle GPS EXTI pin
 
     protected:
         uint32_t dbTime;
