@@ -2,12 +2,13 @@
 
 
 MCPBtn::MCPBtn(uint8_t pin, uint8_t invert) : ButtonGeneral(pin, invert) {
-  stateQueue = xQueueCreate( 1, sizeof(ButtonDebounceState) );
+  statePair.val1 = _state << _pin;
+  statePair.val2 = _state << _pin;
 }
 
 
-void MCPBtn::setState(ButtonDebounceState val_pair) {
-  xQueueGenericSend(stateQueue, &val_pair, 0, queueOVERWRITE);
+void MCPBtn::setState(ButtonDebounceState pair) {
+  memmove(&statePair, &pair, sizeof(ButtonDebounceState));
 }
 
 
@@ -15,11 +16,6 @@ bool MCPBtn::stateChanged(ButtonDebounceState val_pair) {
   uint16_t val1 = (val_pair.val1 >> _pin) & 1;
   uint16_t val2 = (val_pair.val2 >> _pin) & 1;
   return (val1 == val2) && (val1 != _state);
-}
-
-
-bool MCPBtn::getState(ButtonDebounceState* state) {
-  return xQueuePeek(stateQueue, state, 0) == pdTRUE;
 }
 
 
@@ -39,17 +35,12 @@ uint8_t MCPBtn::read(void) {
   _lastTime = _time;
   _time = ms;
 
-  ButtonDebounceState val_pair;
-  if (!getState(&val_pair)) {
-    return _state;
-  }
-
   // Debounce: check if the state hasn't been changed in 10 ms
   // and also check that the new state != old state of this button
-  if (stateChanged(val_pair)) {
+  if (stateChanged(statePair)) {
     _changed = 1;
     _lastChange = ms;
-    updateStateFromPair(val_pair);
+    updateStateFromPair(statePair);
     if (isPressed()) { _pressTime = _time; }
   } else {
     _changed = 0;

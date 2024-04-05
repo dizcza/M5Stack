@@ -42,12 +42,14 @@ void MCPXManager::nextState() {
 
 
 bool MCPXManager::stateChanged() {
+    bool changed = false;
     for (MCPBtn& btn : privateButtons) {
         if (btn.stateChanged(state)) {
-            return true;
+            btn.updateStateFromPair(state);
+            changed = true;
         }
     }
-    return false;
+    return changed;
 }
 
 

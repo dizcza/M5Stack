@@ -67,14 +67,12 @@ class MCPBtn : public ButtonGeneral {
   public:
     MCPBtn(uint8_t pin, uint8_t invert);
     uint8_t read();
-    void setState(ButtonDebounceState val_pair);
-    bool stateChanged(ButtonDebounceState val_pair);
-    void updateStateFromPair(ButtonDebounceState val_pair);
+    void setState(ButtonDebounceState pair);
+    bool stateChanged(ButtonDebounceState pair);
+    void updateStateFromPair(ButtonDebounceState pair);
 
   protected:
-    QueueHandle_t stateQueue;
-
-    bool getState(ButtonDebounceState* state);
+    ButtonDebounceState statePair;
 };
 
 
