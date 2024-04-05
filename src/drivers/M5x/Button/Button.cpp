@@ -96,11 +96,11 @@ uint8_t HWButton::read(void) {
  * These functions do not cause the button to be read.                  *
  *----------------------------------------------------------------------*/
 uint8_t ButtonGeneral::isPressed(void) {
-  return _state == 0 ? 0 : 1;
+  return _state != _invert;
 }
 
 uint8_t ButtonGeneral::isReleased(void) {
-  return _state == 0 ? 1 : 0;
+  return _state == _invert;
 }
 
 /*----------------------------------------------------------------------*
@@ -110,16 +110,16 @@ uint8_t ButtonGeneral::isReleased(void) {
  * These functions do not cause the button to be read.                  *
  *----------------------------------------------------------------------*/
 uint8_t ButtonGeneral::wasPressed(void) {
-  return _state && _changed;
+  return isPressed() && _changed;
 }
 
 uint8_t ButtonGeneral::wasReleased(void) {
-  return !_state && _changed && millis() - _pressTime < _hold_time;
+  return isReleased() && _changed && (millis() - _pressTime < _hold_time);
 }
 
 uint8_t ButtonGeneral::wasReleasefor(uint32_t ms) {
   _hold_time = ms;
-  return !_state && _changed && millis() - _pressTime >= ms;
+  return isReleased() && _changed && (millis() - _pressTime >= ms);
 }
 /*----------------------------------------------------------------------*
  * pressedFor(ms) and releasedFor(ms) check to see if the button is     *
@@ -128,19 +128,19 @@ uint8_t ButtonGeneral::wasReleasefor(uint32_t ms) {
  * These functions do not cause the button to be read.                  *
  *----------------------------------------------------------------------*/
 uint8_t ButtonGeneral::pressedFor(uint32_t ms) {
-  return (_state == 1 && _time - _lastChange >= ms) ? 1 : 0;
+  return isPressed() && (_time - _lastChange >= ms);
 }
 
 uint8_t ButtonGeneral::pressedFor(uint32_t ms, uint32_t continuous_time) {
-  if (_state == 1 && _time - _lastChange >= ms && _time - _lastLongPress >= continuous_time) {
+  if (isPressed() && (_time - _lastChange >= ms) && (_time - _lastLongPress >= continuous_time)) {
     _lastLongPress = _time;
     return 1;
-  } 
+  }
   return 0;
 }
 
 uint8_t ButtonGeneral::releasedFor(uint32_t ms) {
-  return (_state == 0 && _time - _lastChange >= ms) ? 1 : 0;
+  return isReleased() && (_time - _lastChange >= ms);
 }
 /*----------------------------------------------------------------------*
  * lastChange() returns the time the button last changed state,         *
