@@ -11,6 +11,9 @@
   #include "utility/In_eSPI.h"
   #include "utility/Sprite.h"
 
+  #include "drivers/M5x/Button/MCPXManager.h"
+
+
   typedef enum {
     JPEG_DIV_NONE,
     JPEG_DIV_2,
@@ -27,6 +30,8 @@
   };
 
   class M5Display : public TFT_eSPI {
+    private:
+      MCPXManager* mcpx = nullptr;
     public:
       static M5Display* instance;
       M5Display();
@@ -37,6 +42,7 @@
       void clearDisplay(uint32_t color=TFT_BLACK) { fillScreen(color); }
       void clear(uint32_t color=TFT_BLACK) { fillScreen(color); }
       void display() {}
+      void setGPIOExpander(MCPXManager* mcpx) { this->mcpx = mcpx; }
 
       inline void startWrite(void){
         #if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(ESP32_PARALLEL)

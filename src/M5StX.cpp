@@ -85,6 +85,7 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
   // LCD INIT
   if (LCDEnable == true) {
     Lcd.begin();
+    Lcd.setGPIOExpander(&MCPMan);
   }
 
   #if defined (ARDUINO_M5Stack_Core_ESP32)
