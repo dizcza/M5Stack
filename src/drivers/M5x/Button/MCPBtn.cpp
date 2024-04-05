@@ -15,6 +15,9 @@ void MCPBtn::setState(ButtonDebounceState pair) {
 bool MCPBtn::stateChanged(ButtonDebounceState val_pair) {
   uint16_t val1 = (val_pair.val1 >> _pin) & 1;
   uint16_t val2 = (val_pair.val2 >> _pin) & 1;
+  if ((val1 == val2) && (val1 != _state)) {
+    log_d("BTN %d state changed", _pin);
+  }
   return (val1 == val2) && (val1 != _state);
 }
 

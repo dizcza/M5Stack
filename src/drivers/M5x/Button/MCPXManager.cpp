@@ -49,6 +49,9 @@ bool MCPXManager::stateChanged() {
             changed = true;
         }
     }
+    if (changed) {
+        log_d("at least one button changed state");
+    }
     return changed;
 }
 
