@@ -139,7 +139,7 @@
     #define TFT_DC            26
     #define TFT_MOSI          15
     #define TFT_SCLK          14
-    #define TFT_BL            4
+    #undef TFT_BL
     #define TFT_MISO          2
 
     #undef BTN_BL
