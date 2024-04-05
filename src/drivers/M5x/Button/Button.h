@@ -12,7 +12,16 @@
 #define HWButton_h
 
 #include <Arduino.h>
-#include "MCPXManager.h"
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/queue.h"
+
+
+typedef struct {
+  uint16_t val1;
+  uint16_t val2;
+} ButtonDebounceState;
 
 
 class ButtonGeneral {
@@ -56,13 +65,16 @@ class HWButton : public ButtonGeneral {
 
 class MCPBtn : public ButtonGeneral {
   public:
-    MCPBtn(MCPXManager& mcpMan, uint8_t pin, uint8_t invert);
+    MCPBtn(uint8_t pin, uint8_t invert);
     uint8_t read();
+    void setState(ButtonDebounceState val_pair);
+    bool stateChanged(ButtonDebounceState val_pair);
+    void updateStateFromPair(ButtonDebounceState val_pair);
 
   protected:
-    MCPXManager& mcpMan;
+    QueueHandle_t stateQueue;
 
-    bool stateChanged(uint16_t val1, uint16_t val2);
+    bool getState(ButtonDebounceState* state);
 };
 
 

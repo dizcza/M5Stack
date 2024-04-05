@@ -4,6 +4,7 @@
 #include <vector>
 #include <Wire.h>
 #include "drivers/SRS/MCP23017/MCP23017.h"
+#include "Button.h"
 
 
 #define MCP_EXPANDER_LORA_RST_PIN    0
@@ -28,7 +29,6 @@ class MCPXManager {
         MCP23017 mcpx;
 
         MCPXManager(uint8_t address = MCP23017_I2C_ADDRESS, TwoWire& bus = Wire, uint32_t dbTime = 10);
-        std::pair<uint16_t, uint16_t> read();
         void begin();
         void enableLoRa();                 // reset LoRa
         void enableTFT();                  // reset TFT
@@ -36,10 +36,22 @@ class MCPXManager {
         void enableGPS();                  // reset GPS
         void wakeUpGPS();                  // toggle GPS EXTI pin
 
-    protected:
-        uint32_t dbTime;
-        uint32_t lastReadMs;
-        std::pair<uint16_t, uint16_t> state;
+        void addButton(MCPBtn& btn);
+        void nextState();
 
+    protected:
+        QueueHandle_t statesQueue;
+        uint32_t dbTime;
+        ButtonDebounceState state;
+        std::vector<MCPBtn> privateButtons;
+        std::vector<MCPBtn> userButtons;
+
+        void startUpdateTask();
         void configurePins();
+        bool stateChanged();
+        void read();
+        void saveLastReading();
+
+    private:
+        static void updateTask(void *args);
 };

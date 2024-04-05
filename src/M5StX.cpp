@@ -6,9 +6,9 @@
 
 M5StX::M5StX() : isInited(0)
 #if defined(ARDUINO_TTGO_T1)
- , BtnA(MCPMan, MCP_EXPANDER_BTN_A_PIN, true)
- , BtnB(MCPMan, MCP_EXPANDER_BTN_B_PIN, true)
- , BtnC(MCPMan, MCP_EXPANDER_BTN_C_PIN, true)
+ , BtnA(MCP_EXPANDER_BTN_A_PIN, true)
+ , BtnB(MCP_EXPANDER_BTN_B_PIN, true)
+ , BtnC(MCP_EXPANDER_BTN_C_PIN, true)
 #endif
  { }
 
