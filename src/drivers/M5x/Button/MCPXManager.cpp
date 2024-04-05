@@ -4,10 +4,6 @@
 
 MCPXManager::MCPXManager(uint8_t address, TwoWire& bus, uint32_t dbTime) : mcpx(address, bus), dbTime(dbTime) {
     statesQueue = xQueueCreate( 30, sizeof(ButtonDebounceState) );
-    memset(&state, 0, sizeof(state));
-    privateButtons.emplace_back(MCP_EXPANDER_BTN_A_PIN, true);
-    privateButtons.emplace_back(MCP_EXPANDER_BTN_B_PIN, true);
-    privateButtons.emplace_back(MCP_EXPANDER_BTN_C_PIN, true);
 }
 
 
@@ -17,7 +13,6 @@ void MCPXManager::begin() {
     enableTFT();
     enableLoRa();
     enableGPS();
-    startUpdateTask();
 }
 
 
@@ -26,28 +21,42 @@ void MCPXManager::addButton(MCPBtn* btn) {
 }
 
 
-void MCPXManager::startUpdateTask() {
-    xTaskCreatePinnedToCore(MCPXManager::updateTask, "mcpx_update", 4096, this, 1, NULL, PRO_CPU_NUM);
+void MCPXManager::startReadButtonsTask() {
+    if (taskStarted) {
+        log_i("Task already started");
+        return;
+    }
+    for (MCPBtn* btn : userButtons) {
+        privateButtons.push_back(*btn);
+    }
+    xTaskCreatePinnedToCore(MCPXManager::readButtonsTask, "mcpx_update", 4096, this, 1, NULL, PRO_CPU_NUM);
+    taskStarted = true;
 }
 
 
-void MCPXManager::nextState() {
-    ButtonDebounceState st;
+void MCPXManager::update() {
+    ButtonDebounceState state;
     bool received = false;
-    if (uxQueueMessagesWaiting(statesQueue) > 1) {
-        received = xQueueReceive(statesQueue, &st, 0) == pdTRUE;
+    if (taskStarted) {
+        if (uxQueueMessagesWaiting(statesQueue) > 1) {
+            received = xQueueReceive(statesQueue, &state, 0) == pdTRUE;
+        } else {
+            received = xQueuePeek(statesQueue, &state, 0) == pdTRUE;
+        }
     } else {
-        received = xQueuePeek(statesQueue, &st, 0) == pdTRUE;
+        state = read();
+        received = true;
     }
+
     if (received) {
         for (MCPBtn* btn : userButtons) {
-            btn->setState(st);
+            btn->setState(state);
         }
     }
 }
 
 
-bool MCPXManager::stateChanged() {
+bool MCPXManager::stateChanged(ButtonDebounceState state) {
     bool changed = false;
     for (MCPBtn& btn : privateButtons) {
         if (btn.stateChanged(state)) {
@@ -60,15 +69,15 @@ bool MCPXManager::stateChanged() {
 
 
 void MCPXManager::saveLastReading() {
-    read();
-    if (stateChanged()) {
+    ButtonDebounceState state = read();
+    if (stateChanged(state)) {
         xQueueSend(statesQueue, &state, pdMS_TO_TICKS(10));
     }
 }
 
 
-void MCPXManager::updateTask(void *args) {
-    log_i("updateTask started");
+void MCPXManager::readButtonsTask(void *args) {
+    log_i("readButtonsTask started");
     MCPXManager* mng = (MCPXManager*) args;
     esp_task_wdt_add(NULL);
     while (true) {
@@ -79,12 +88,12 @@ void MCPXManager::updateTask(void *args) {
 }
 
 
-void MCPXManager::read() {
-    uint16_t val1 = mcpx.read();
+ButtonDebounceState MCPXManager::read() {
+    ButtonDebounceState state;
+    state.val1 = mcpx.read();
     delay(dbTime);
-    uint16_t val2 = mcpx.read();
-    state.val1 = val1;
-    state.val2 = val2;
+    state.val2 = mcpx.read();
+    return state;
 }
 
 

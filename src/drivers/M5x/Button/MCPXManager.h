@@ -37,21 +37,21 @@ class MCPXManager {
         void wakeUpGPS();                  // toggle GPS EXTI pin
 
         void addButton(MCPBtn* btn);
-        void nextState();
+        void update();
+        void startReadButtonsTask();
 
     protected:
+        bool taskStarted = false;
         QueueHandle_t statesQueue;
         uint32_t dbTime;
-        ButtonDebounceState state;
         std::vector<MCPBtn> privateButtons;
         std::vector<MCPBtn*> userButtons;
 
-        void startUpdateTask();
         void configurePins();
-        bool stateChanged();
-        void read();
+        bool stateChanged(ButtonDebounceState state);
+        ButtonDebounceState read();
         void saveLastReading();
 
     private:
-        static void updateTask(void *args);
+        static void readButtonsTask(void *args);
 };

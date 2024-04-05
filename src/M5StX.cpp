@@ -5,15 +5,12 @@
 
 
 M5StX::M5StX() : isInited(0)
-#if defined(ARDUINO_TTGO_T1)
- , BtnA(MCP_EXPANDER_BTN_A_PIN, true)
- , BtnB(MCP_EXPANDER_BTN_B_PIN, true)
- , BtnC(MCP_EXPANDER_BTN_C_PIN, true)
-#endif
  {
+#if defined(ARDUINO_TTGO_T1)
    MCPMan.addButton(&BtnA);
    MCPMan.addButton(&BtnB);
    MCPMan.addButton(&BtnC);
+#endif
  }
 
 void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externalPower) {
@@ -126,7 +123,7 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
 }
 
 void M5StX::update() {
-  MCPMan.nextState();
+  MCPMan.update();
   #if defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_TWatch) /* || defined (ARDUINO_ESP32_DEV) */
     Touch.update();
     Buttons.update();

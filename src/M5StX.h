@@ -245,9 +245,9 @@
 
           #define DEBOUNCE_MS 10
           MCPXManager MCPMan = MCPXManager(MCP23017_I2C_ADDRESS, Wire, DEBOUNCE_MS);
-          MCPBtn BtnA;
-          MCPBtn BtnB;
-          MCPBtn BtnC;
+          MCPBtn BtnA = MCPBtn(MCP_EXPANDER_BTN_A_PIN, true);
+          MCPBtn BtnB = MCPBtn(MCP_EXPANDER_BTN_B_PIN, true);
+          MCPBtn BtnC = MCPBtn(MCP_EXPANDER_BTN_C_PIN, true);
 
         #else // M5StickC/+
 
