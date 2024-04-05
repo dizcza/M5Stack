@@ -33,7 +33,13 @@ void MCPXManager::startUpdateTask() {
 
 void MCPXManager::nextState() {
     ButtonDebounceState st;
-    if (xQueueReceive(statesQueue, &st, 0) == pdTRUE) {
+    bool received = false;
+    if (uxQueueMessagesWaiting(statesQueue) > 1) {
+        received = xQueueReceive(statesQueue, &st, 0) == pdTRUE;
+    } else {
+        received = xQueuePeek(statesQueue, &st, 0) == pdTRUE;
+    }
+    if (received) {
         for (MCPBtn* btn : userButtons) {
             btn->setState(st);
         }
@@ -48,9 +54,6 @@ bool MCPXManager::stateChanged() {
             btn.updateStateFromPair(state);
             changed = true;
         }
-    }
-    if (changed) {
-        log_d("at least one button changed state");
     }
     return changed;
 }

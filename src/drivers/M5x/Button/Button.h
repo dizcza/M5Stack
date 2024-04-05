@@ -70,9 +70,6 @@ class MCPBtn : public ButtonGeneral {
     void setState(ButtonDebounceState pair);
     bool stateChanged(ButtonDebounceState pair);
     void updateStateFromPair(ButtonDebounceState pair);
-
-  protected:
-    ButtonDebounceState statePair;
 };
 
 
