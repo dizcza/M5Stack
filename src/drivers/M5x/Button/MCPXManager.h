@@ -36,7 +36,7 @@ class MCPXManager {
         void enableGPS();                  // reset GPS
         void wakeUpGPS();                  // toggle GPS EXTI pin
 
-        void addButton(MCPBtn& btn);
+        void addButton(MCPBtn* btn);
         void nextState();
 
     protected:
@@ -44,7 +44,7 @@ class MCPXManager {
         uint32_t dbTime;
         ButtonDebounceState state;
         std::vector<MCPBtn> privateButtons;
-        std::vector<MCPBtn> userButtons;
+        std::vector<MCPBtn*> userButtons;
 
         void startUpdateTask();
         void configurePins();

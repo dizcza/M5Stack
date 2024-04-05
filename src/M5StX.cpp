@@ -11,9 +11,9 @@ M5StX::M5StX() : isInited(0)
  , BtnC(MCP_EXPANDER_BTN_C_PIN, true)
 #endif
  {
-   MCPMan.addButton(BtnA);
-   MCPMan.addButton(BtnB);
-   MCPMan.addButton(BtnC);
+   MCPMan.addButton(&BtnA);
+   MCPMan.addButton(&BtnB);
+   MCPMan.addButton(&BtnC);
  }
 
 void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externalPower) {

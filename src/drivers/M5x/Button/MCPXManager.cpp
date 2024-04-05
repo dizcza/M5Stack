@@ -21,7 +21,7 @@ void MCPXManager::begin() {
 }
 
 
-void MCPXManager::addButton(MCPBtn& btn) {
+void MCPXManager::addButton(MCPBtn* btn) {
     userButtons.push_back(btn);
 }
 
@@ -34,8 +34,8 @@ void MCPXManager::startUpdateTask() {
 void MCPXManager::nextState() {
     ButtonDebounceState st;
     if (xQueueReceive(statesQueue, &st, 0) == pdTRUE) {
-        for (MCPBtn& btn : userButtons) {
-            btn.setState(st);
+        for (MCPBtn* btn : userButtons) {
+            btn->setState(st);
         }
     }
 }
