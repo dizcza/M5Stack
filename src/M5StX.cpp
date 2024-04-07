@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include "M5StX.h"
+#include "SD.h"
 
 
 M5StX::M5StX() : isInited(0)
@@ -89,21 +90,9 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     Lcd.setGPIOExpander(&MCPMan);
   }
 
-  #if defined (ARDUINO_M5Stack_Core_ESP32)
-    // TF Card
-    if (SDEnable == true) {
-      SD.begin(TFCARD_CS_PIN, SPI, 40000000);
-    }
-  #elif defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_M5STACK_FIRE)
-    // TF Card
-    if (SDEnable == true) {
-      SD.begin(TFCARD_CS_PIN, SPI, 40000000);
-    }
-  #elif defined (ARDUINO_ESP32_DEV)  //M35
-    // if (SDEnable == true) {
-    //   SD.begin(TFCARD_CS_PIN, SPI, 40000000);
-    // }
-  #endif
+  if (SDEnable == true) {
+    SD.begin(TFCARD_CS_PIN, SPI, 40000000);
+  }
 
   #if defined (SRS_SDP32) || defined (ARDUINO_ESP32_DEV)
     Sos.begin(/* 170 */);

@@ -144,7 +144,7 @@
 
     #undef BTN_BL
 
-    #define SD_ENABLE          0
+    #define SD_ENABLE          1
     #define TFCARD_CS_PIN      13
     #define TFCARD_MISO_PIN    TFT_MISO
     #define TFCARD_MOSI_PIN    TFT_MOSI
