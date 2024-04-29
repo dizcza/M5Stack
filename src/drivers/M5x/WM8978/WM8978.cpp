@@ -12,7 +12,7 @@ WM8978::WM8978() {
 }
 
 
-static const char *TAG = "wm8978";
+static const char *_TAG = "wm8978";
 
 // WM8978 register value buffer zone (total 58 registers 0 to 57), occupies 116 bytes of memory
 // Because the IIC WM8978 operation does not support read operations, so save all the register values in the local
@@ -33,12 +33,12 @@ bool  WM8978::begin() {
   Wire.beginTransmission(WM8978_ADDR);
   const uint8_t error = Wire.endTransmission();
   if (error) {
-    ESP_LOGE(TAG, "No WM8978 dac @ i2c address: 0x%X", WM8978_ADDR);
+    ESP_LOGE(_TAG, "No WM8978 dac @ i2c address: 0x%X", WM8978_ADDR);
     return false;
   }
   const int err = Init();
   if (err) {
-    ESP_LOGE(TAG, "WM8978 init err: 0x%X", err);
+    ESP_LOGE(_TAG, "WM8978 init err: 0x%X", err);
     return false;
   }
   cfgI2S(2, 0);       //Philips 16bit
@@ -60,9 +60,9 @@ bool  WM8978::begin() {
 }
 
 bool WM8978::begin(const uint8_t sda, const uint8_t scl, const uint32_t frequency) {
-  ESP_LOGD(TAG, "i2c init sda=%i scl=%i frequency=%i", sda, scl, frequency);
+  ESP_LOGD(_TAG, "i2c init sda=%i scl=%i frequency=%i", sda, scl, frequency);
   if (!Wire.begin((int) sda, (int) scl, frequency)) {
-    ESP_LOGE(TAG, "Wire setup error sda=%i scl=%i frequency=%i", sda, scl, frequency);
+    ESP_LOGE(_TAG, "Wire setup error sda=%i scl=%i frequency=%i", sda, scl, frequency);
     return false;
   }
   return begin();
