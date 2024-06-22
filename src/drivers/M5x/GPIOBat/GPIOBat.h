@@ -2,9 +2,9 @@
 
 #include <Arduino.h>
 
-#define GPIOBat_VBAT_ADC_MAX    4170
-#define GPIOBat_VBAT_ADC_FULL   4100
-#define GPIOBat_VBAT_ADC_MIN    3650
+#define GPIOBat_VBAT_ADC_MAX    4100
+#define GPIOBat_VBAT_ADC_FULL   4000
+#define GPIOBat_VBAT_ADC_MIN    3100
 
 class GPIOBat
 {
