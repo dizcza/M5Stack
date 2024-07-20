@@ -4,7 +4,7 @@
 
 #define GPIOBat_VBAT_ADC_MAX    4100
 #define GPIOBat_VBAT_ADC_FULL   4000
-#define GPIOBat_VBAT_ADC_MIN    3100
+#define GPIOBat_VBAT_ADC_MIN    2500
 
 class GPIOBat
 {
