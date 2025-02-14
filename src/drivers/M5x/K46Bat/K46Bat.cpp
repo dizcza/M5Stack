@@ -1,9 +1,9 @@
 
 #include "K46Bat.h"
 #include "M5StX.h"
-#include <driver/adc.h>
 
 #if defined (PIN_VBAT_TEST) && defined (CHAN_VBAT_ADC)
+#include <driver/adc.h>
 
 K46Bat::K46Bat() {
 }

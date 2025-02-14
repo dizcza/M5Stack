@@ -105,11 +105,6 @@
                     uint16_t offX = 0, uint16_t offY = 0,
                     double scale = 1.0, uint8_t alphaThreshold = 127);
 
-      void drawPngUrl(const char *url, uint16_t x = 0, uint16_t y = 0,
-                    uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                    uint16_t offX = 0, uint16_t offY = 0,
-                    double scale = 1.0, uint8_t alphaThreshold = 127);
-
     // Saves and restores font properties, datum, cursor and colors so
     // code can be non-invasive. Just make sure that every push is also
     // popped when you're done to prevent stack from growing.

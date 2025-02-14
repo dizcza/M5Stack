@@ -266,7 +266,7 @@ typedef struct {
   uint16_t outHeight;
 } jpg_file_decoder_t;
 
-static uint32_t jpgReadFile(JDEC *decoder, uint8_t *buf, uint32_t len) {
+static UINT jpgReadFile(JDEC *decoder, BYTE *buf, UINT len) {
   jpg_file_decoder_t *jpeg = (jpg_file_decoder_t *)decoder->device;
   File *file = (File *)jpeg->src;
   if (buf) {
@@ -277,7 +277,7 @@ static uint32_t jpgReadFile(JDEC *decoder, uint8_t *buf, uint32_t len) {
   return len;
 }
 
-static uint32_t jpgRead(JDEC *decoder, uint8_t *buf, uint32_t len) {
+static UINT jpgRead(JDEC *decoder, BYTE *buf, UINT len) {
   jpg_file_decoder_t *jpeg = (jpg_file_decoder_t *)decoder->device;
   if (buf) {
     memcpy(buf, (const uint8_t *)jpeg->src + jpeg->index, len);
@@ -286,7 +286,7 @@ static uint32_t jpgRead(JDEC *decoder, uint8_t *buf, uint32_t len) {
   return len;
 }
 
-static uint32_t jpgWrite(JDEC *decoder, void *bitmap, JRECT *rect) {
+static UINT jpgWrite(JDEC *decoder, void *bitmap, JRECT *rect) {
   jpg_file_decoder_t *jpeg = (jpg_file_decoder_t *)decoder->device;
   uint16_t x = rect->left;
   uint16_t y = rect->top;
@@ -359,7 +359,7 @@ static uint32_t jpgWrite(JDEC *decoder, void *bitmap, JRECT *rect) {
 }
 
 static bool jpgDecode(jpg_file_decoder_t *jpeg,
-                      uint32_t (*reader)(JDEC *, uint8_t *, uint32_t)) {
+                      UINT (*reader)(JDEC*,BYTE*,UINT)) {
   static uint8_t work[3100];
   JDEC decoder;
 
@@ -571,79 +571,6 @@ void M5Display::drawPngFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y
   pngle_destroy(pngle);
   file.close();
 }
-
-void M5Display::drawPngUrl(const char *url, uint16_t x, uint16_t y,
-                            uint16_t maxWidth, uint16_t maxHeight, uint16_t offX,
-                            uint16_t offY, double scale, uint8_t alphaThreshold)
-{
-  HTTPClient http;
-
-  if (WiFi.status() != WL_CONNECTED) {
-    log_e("Not connected");
-    return ;
-  }
-
-  http.begin(url);
-
-  int httpCode = http.GET();
-  if (httpCode != HTTP_CODE_OK) {
-    log_e("HTTP ERROR: %d\n", httpCode);
-    http.end();
-    return ;
-  }
-
-  WiFiClient *stream = http.getStreamPtr();
-
-  pngle_t *pngle = pngle_new();
-
-  png_file_decoder_t png;
-
-  if (!maxWidth) {
-    maxWidth = width() - x;
-  }
-  if (!maxHeight) {
-    maxHeight = height() - y;
-  }
-
-
-  png.x = x;
-  png.y = y;
-  png.maxWidth = maxWidth;
-  png.maxHeight = maxHeight;
-  png.offX = offX;
-  png.offY = offY;
-  png.scale = scale;
-  png.alphaThreshold = alphaThreshold;
-  png.tft = this;
-
-  pngle_set_user_data(pngle, &png);
-  pngle_set_draw_callback(pngle, pngle_draw_callback);
-
-  // Feed data to pngle
-  uint8_t buf[1024];
-  int remain = 0;
-  int len;
-  while (http.connected()) {
-    size_t size = stream->available();
-    if (!size) { delay(1); continue; }
-
-    if (size > sizeof(buf) - remain) size = sizeof(buf) - remain;
-    if ((len = stream->readBytes(buf + remain, size)) > 0) {
-      int fed = pngle_feed(pngle, buf, remain + len);
-      if (fed < 0) {
-        log_e("[pngle error] %s", pngle_error(pngle));
-        break;
-      }
-
-      remain = remain + len - fed;
-      if (remain > 0) memmove(buf, buf + fed, remain);
-    }
-  }
-
-  pngle_destroy(pngle);
-  http.end();
-}
-
 
 // Saves and restores font properties, datum, cursor, colors
 
