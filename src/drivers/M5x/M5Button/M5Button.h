@@ -734,7 +734,7 @@ class Gesture;
   #include "drivers/M5x/M5Touch/M5Touch.h"
 #endif
 
-#define BUTTON_FREEFONT FSS9
+#define BUTTON_FREEFONT FM9
 #define BUTTON_TEXTFONT 1
 #define BUTTON_TEXTSIZE 1
 #define BUTTON_DATUM MC_DATUM
