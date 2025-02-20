@@ -179,12 +179,10 @@
     #endif
 
     #if defined (ARDUINO_ESP32_DEV) || defined (SRS_SDP32)
-      #include "drivers/SRS/BME280/BME280.h"
-      #include "drivers/SRS/RCWL9600/RCWL9600.h"
-      #include "drivers/SRS/SHT3x/SHT3x.h"
-      #include "drivers/SRS/VL53L0X/VL53L0X.h"
-      // #include <SDPSensors.h>
-      // #include <SparkFun_u-blox_GNSS_Arduino_Library.h>
+      // #include "drivers/SRS/BME280/BME280.h"
+      // #include "drivers/SRS/RCWL9600/RCWL9600.h"
+      // #include "drivers/SRS/SHT3x/SHT3x.h"
+      // #include "drivers/SRS/VL53L0X/VL53L0X.h"
     #endif
 
 

@@ -3657,8 +3657,8 @@ void TFT_eSPI::drawChar(int32_t x, int32_t y, uint16_t c, uint32_t color, uint32
 {
   if (_vpOoB) return;
 
-  int32_t xd = x + _xDatum;
-  int32_t yd = y + _yDatum;
+  // int32_t xd = x + _xDatum;
+  // int32_t yd = y + _yDatum;
 
   if (c < 32) return;
 #ifdef LOAD_GLCD
@@ -4948,7 +4948,7 @@ int16_t TFT_eSPI::drawChar(uint16_t uniCode, int32_t x, int32_t y, uint8_t font)
 
   int32_t width  = 0;
   int32_t height = 0;
-  uint32_t flash_address = 0;
+  // uint32_t flash_address = 0;
   uniCode -= 32;
 
 #ifdef LOAD_FONT2
@@ -4977,11 +4977,11 @@ int16_t TFT_eSPI::drawChar(uint16_t uniCode, int32_t x, int32_t y, uint8_t font)
 
   if ((xd + width * textsize < _vpX || xd >= _vpW) && (yd + height * textsize < _vpY || yd >= _vpH)) return width * textsize ;
 
-  int32_t w = width;
-  int32_t pX      = 0;
-  int32_t pY      = y;
-  uint8_t line = 0;
-  bool clip = xd < _vpX || xd + width  * textsize >= _vpW || yd < _vpY || yd + height * textsize >= _vpH;
+  // int32_t w = width;
+  // int32_t pX      = 0;
+  // int32_t pY      = y;
+  // uint8_t line = 0;
+  // bool clip = xd < _vpX || xd + width  * textsize >= _vpW || yd < _vpY || yd + height * textsize >= _vpH;
 
 #ifdef LOAD_FONT2 // chop out code if we do not need it
   if (font == 2) {

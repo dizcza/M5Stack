@@ -170,7 +170,7 @@ class Point {
   int16_t x, y;
 
  private:
-  char _text[12];
+  char _text[18] = {};
 };
 
 class Zone {

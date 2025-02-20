@@ -626,6 +626,9 @@ void AXP192::SetDCVoltage(uint8_t number, uint16_t voltage) {
         case 2:
             addr = 0x27;
             break;
+        default:
+            log_w("SetDCVoltage: Invalid number %u", number);
+            return;
     }
     Write1Byte(addr, (Read8bit(addr) & 0x80) | (voltage & 0x7F));
 }
