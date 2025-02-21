@@ -472,7 +472,6 @@ void M5Display::drawJpgFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y
  */
 
 #include "utility/pngle.h"
-#include <HTTPClient.h>
 
 typedef struct _png_draw_params {
   uint16_t x;
