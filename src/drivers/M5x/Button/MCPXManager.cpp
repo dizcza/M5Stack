@@ -10,9 +10,9 @@ MCPXManager::MCPXManager(uint8_t address, TwoWire& bus, uint32_t dbTime) : mcpx(
 void MCPXManager::begin() {
     mcpx.begin();
     configurePins();
-    enableTFT();
-    enableLoRa();
-    enableGPS();
+    enableTFT(true);
+    enableLoRa(true);
+    enableGPS(true);
 }
 
 
@@ -124,27 +124,33 @@ void MCPXManager::wakeUpGPS() {
 }
 
 
-void MCPXManager::enableGPS() {
+void MCPXManager::enableGPS(bool enable) {
     mcpx.digitalWrite(MCP_EXPANDER_GPS_RST_PIN, 0);
-    delay(100);
-    mcpx.digitalWrite(MCP_EXPANDER_GPS_RST_PIN, 1);
-    mcpx.digitalWrite(MCP_EXPANDER_GPS_EXTINT_PIN, 0);
+    if (enable) {
+        delay(100);
+        mcpx.digitalWrite(MCP_EXPANDER_GPS_RST_PIN, 1);
+        mcpx.digitalWrite(MCP_EXPANDER_GPS_EXTINT_PIN, 0);
+    }
 }
 
 
-void MCPXManager::enableLoRa()
+void MCPXManager::enableLoRa(bool enable)
 {
     mcpx.digitalWrite(MCP_EXPANDER_LORA_RST_PIN, 0);
-    delay(100);
-    mcpx.digitalWrite(MCP_EXPANDER_LORA_RST_PIN, 1);
+    if (enable) {
+        delay(100);
+        mcpx.digitalWrite(MCP_EXPANDER_LORA_RST_PIN, 1);
+    }
 }
 
-void MCPXManager::enableTFT()
+void MCPXManager::enableTFT(bool enable)
 {
     mcpx.digitalWrite(MCP_EXPANDER_TFT_RST_PIN, 0);
-    delay(100);
-    mcpx.digitalWrite(MCP_EXPANDER_TFT_RST_PIN, 1);
-    enableTFT_BL(true);
+    if (enable) {
+        delay(100);
+        mcpx.digitalWrite(MCP_EXPANDER_TFT_RST_PIN, 1);
+    }
+    enableTFT_BL(enable);
 }
 
 void MCPXManager::enableTFT_BL(bool enable) {

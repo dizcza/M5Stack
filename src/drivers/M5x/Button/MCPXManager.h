@@ -30,10 +30,10 @@ class MCPXManager {
 
         MCPXManager(uint8_t address = MCP23017_I2C_ADDRESS, TwoWire& bus = Wire, uint32_t dbTime = 10);
         void begin();
-        void enableLoRa();                 // reset LoRa
-        void enableTFT();                  // reset TFT
+        void enableLoRa(bool enable);                 // reset LoRa
+        void enableTFT(bool enable);                  // reset TFT
         void enableTFT_BL(bool enable);    // enable TFT backlight
-        void enableGPS();                  // reset GPS
+        void enableGPS(bool enable);                  // reset GPS
         void wakeUpGPS();                  // toggle GPS EXTI pin
 
         void addButton(MCPBtn* btn);
