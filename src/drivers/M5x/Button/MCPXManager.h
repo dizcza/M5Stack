@@ -29,7 +29,7 @@ class MCPXManager {
         MCP23017 mcpx;
 
         MCPXManager(uint8_t address = MCP23017_I2C_ADDRESS, TwoWire& bus = Wire, uint32_t dbTime = 10);
-        void begin();
+        bool begin();
         void enableLoRa(bool enable);                 // reset LoRa
         void enableTFT(bool enable);                  // reset TFT
         void enableTFT_BL(bool enable);    // enable TFT backlight

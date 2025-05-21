@@ -7,12 +7,16 @@ MCPXManager::MCPXManager(uint8_t address, TwoWire& bus, uint32_t dbTime) : mcpx(
 }
 
 
-void MCPXManager::begin() {
-    mcpx.begin();
+bool MCPXManager::begin() {
+    if (!mcpx.begin()) {
+        log_e("MCP23017 begin failed");
+        return false;
+    }
     configurePins();
     enableTFT(true);
     enableLoRa(true);
     enableGPS(true);
+    return true;
 }
 
 
