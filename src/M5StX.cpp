@@ -70,7 +70,7 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     pinMode(SPEAKER_EN_PIN, OUTPUT);
     digitalWrite(SPEAKER_EN_PIN, LOW);
     //Set Wire on HY2.0-4P ?
-  #elif defined (ARDUINO_ESP32_DEV) //M35
+  #elif defined (ARDUINO_ESP32_DEV_UNUSED) //M35
     Wire.begin(21, 22, 400000);
     //Touch.begin();
     Axp.begin();
@@ -94,7 +94,7 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
     SD.begin(TFCARD_CS_PIN, SPI, 40000000);
   }
 
-  #if defined (SRS_SDP32) || defined (ARDUINO_ESP32_DEV)
+  #if defined (SRS_SDP32) || defined (ARDUINO_ESP32_DEV_UNUSED)
     Sos.begin(/* 170 */);
     Sht.begin();
     // #if defined (SRS_SDP32) && defined (ARDUINO_M5STACK_Core2)
@@ -113,7 +113,7 @@ void M5StX::begin(bool SDEnable, bool SerialEnable, bool LCDEnable, bool externa
 
 void M5StX::update() {
   MCPMan.update();
-  #if defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_TWatch) /* || defined (ARDUINO_ESP32_DEV) */
+  #if defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_TWatch) /* || defined (ARDUINO_ESP32_DEV_UNUSED) */
     Touch.update();
     Buttons.update();
   #else

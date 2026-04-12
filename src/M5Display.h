@@ -119,7 +119,7 @@
      private:
       std::vector<DisplayState> _displayStateStack;
 
-    #if defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_TWatch) || defined (ARDUINO_ESP32_DEV) //Core2 or M35
+    #if defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_TWatch) || defined (ARDUINO_ESP32_DEV_UNUSED) //Core2 or M35
 
       #ifdef TFT_eSPI_TOUCH_EMULATION
         // Emulates the TFT_eSPI touch interface using M5.Touch

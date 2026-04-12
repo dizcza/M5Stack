@@ -218,7 +218,7 @@ void MAX7315::max7315(uint8_t reg, uint8_t value) {
 	Wire.endTransmission();
 }
 
-#if defined (ARDUINO_ESP32_DEV) //M35
+#if defined (ARDUINO_ESP32_DEV_UNUSED) //M35
   void MAX7315::initPins() {
     setPinMode(MAX_PWR_OFF, OUTPUT);
     setPinMode(MAX_KBD_BL, OUTPUT);

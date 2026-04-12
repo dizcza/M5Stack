@@ -149,7 +149,7 @@ AXP192::AXP192() {
         ScreenBreath(11);
     }
 
-#elif defined (ARDUINO_ESP32_DEV)     //M35
+#elif defined (ARDUINO_ESP32_DEV_UNUSED)     //M35
     void AXP192::begin(mbus_mode_t mode /* = kMBusModeOutput */,
                         bool disableRTC /* = false */,
                         bool disableLcdBl /* = false */,
@@ -457,7 +457,7 @@ uint16_t AXP192::GetVapsData(void) {
         Write1Byte(0x82, 0x00); // Disable ADCs
         Write1Byte(0x12, Read8bit(0x12) & 0xA1); // Disable all outputs but DCDC1
     }
-#elif defined (ARDUINO_ESP32_DEV)     //M35
+#elif defined (ARDUINO_ESP32_DEV_UNUSED)     //M35
     void AXP192::SetSleep(void) {
         Write1Byte(0x31 , Read8bit(0x31) | ( 1 << 3)); // Turn on short press to wake up
         Write1Byte(0x90 , Read8bit(0x90) & 0xF8); // GPIO0 - floating in M5StickC/+, OD - M5Core2
@@ -789,7 +789,7 @@ void AXP192::SetLDOEnable(uint8_t number, bool state) {
         Write1Byte(0x12, buf);
     }
 
-#elif defined (ARDUINO_ESP32_DEV)     //M35
+#elif defined (ARDUINO_ESP32_DEV_UNUSED)     //M35
 
     // Select source for BUS_5V
     // kMBusModeOutput : powered by USB or Battery

@@ -164,7 +164,7 @@
       #include "drivers/M5x/IP5306/Power.h"
       #include "SD.h"
       #include "FS.h"
-    #elif defined (ARDUINO_ESP32_DEV)     //M35
+    #elif defined (ARDUINO_ESP32_DEV_UNUSED)     //M35
       #include "drivers/M5x/AXP192/AXP192.h"
       #include "drivers/M5x/Button/Button.h"
       //#include "drivers/M35/LTC2943/LTC2943.h"
@@ -178,7 +178,7 @@
       #include "drivers/K36/MAX7315/MAX7315.h"
     #endif
 
-    #if defined (ARDUINO_ESP32_DEV) || defined (SRS_SDP32)
+    #if defined (ARDUINO_ESP32_DEV_UNUSED) || defined (SRS_SDP32)
       // #include "drivers/SRS/BME280/BME280.h"
       // #include "drivers/SRS/RCWL9600/RCWL9600.h"
       // #include "drivers/SRS/SHT3x/SHT3x.h"
@@ -225,7 +225,7 @@
           Button BtnB = Button(130,240,70,40, true, "BtnB");
           Button BtnC = Button(230,240,80,40, true, "BtnC");
 
-        #elif defined (ARDUINO_ESP32_DEV) //M35 both with HW buttons and touchscreen
+        #elif defined (ARDUINO_ESP32_DEV_UNUSED) //M35 both with HW buttons and touchscreen
 
           #define DEBOUNCE_MS 10
           HWButton BtnA = HWButton(BUTTON_A_PIN, true, DEBOUNCE_MS);
@@ -286,7 +286,7 @@
           MPU6886 IMU = MPU6886();
           void powerOFF() { Axp.PowerOff(); }
           void powerOff() { Axp.PowerOff(); }
-        #elif defined (ARDUINO_ESP32_DEV)     //M35
+        #elif defined (ARDUINO_ESP32_DEV_UNUSED)     //M35
           AXP192 Axp = AXP192();
           //LTC2943 Bat;
           MAX7315 Ioe = MAX7315(/*MAX7315_I2C_ADDRESS*/);
@@ -311,7 +311,7 @@
           SHT3x Sht  = SHT3x(adrSht0x44);
           // SFE_UBLOX_GNSS Gnss;
           VL53L0X Tof;
-        #elif defined (ARDUINO_ESP32_DEV)
+        #elif defined (ARDUINO_ESP32_DEV_UNUSED)
           RCWL9600 Sos;
           // SDP8XX Mic = SDP8XX(Address5, MassFlow, Wire);
           SHT3x Sht  = SHT3x(adrSht0x44);

@@ -92,7 +92,7 @@ public:
        * GPIO4: N/U
        */
       void  begin(bool disableLcdBl = false, bool disablePeriph = false, bool disableRTC = false, bool disableVibr = true);
-    #elif defined (ARDUINO_ESP32_DEV)     //M35
+    #elif defined (ARDUINO_ESP32_DEV_UNUSED)     //M35
       #define AXPWIRE Wire
       /**
        * DCDC1: Main rail. When not set the controller shuts down.
@@ -136,7 +136,7 @@ public:
     #elif defined (ARDUINO_M5Stick_C) /* || defined (ARDUINO_M5Stick_C_Plus) */
       void SetLDO2(bool State); // Can turn LCD Backlight OFF for power saving
       void SetLDO3(bool State); // Lcd controller
-    #elif defined (ARDUINO_ESP32_DEV)     //M35
+    #elif defined (ARDUINO_ESP32_DEV_UNUSED)     //M35
       void SetBusPowerMode(mbus_mode_t mode);
       void SetLcdVoltage(uint16_t voltage); //DCDC3
       void SetLed(uint8_t state);       //LDO1

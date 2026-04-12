@@ -331,7 +331,7 @@
     #define SPEAKER_PIN       25  // Connected to NS4150 via C only... unusable
     #define SPEAKER_EN_PIN    19  // Low - shutdown
 
-  #elif defined (ARDUINO_ESP32_DEV) //Select "ESP Wrover Module" for M35 = WROVERB + BTNx3 + 3.5" ILI9488 + CTS
+  #elif defined (ARDUINO_ESP32_DEV_UNUSED) //Select "ESP Wrover Module" for M35 = WROVERB + BTNx3 + 3.5" ILI9488 + CTS
     #define BUTTON_A_PIN      39
     #define BUTTON_B_PIN      35
     #define BUTTON_C_PIN      34
