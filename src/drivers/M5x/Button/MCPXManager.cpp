@@ -19,15 +19,15 @@ bool MCPXManager::begin() {
 }
 
 
-void MCPXManager::addButton(ExpanderButton& btn) {
+void MCPXManager::addButton(MCPBtn* btn) {
     userButtons.push_back(btn);
 }
 
 
 void MCPXManager::update() {
     ButtonDebounceState state = read();
-    for (auto&& btn : userButtons) {
-        btn.setState(state);
+    for (auto* btn : userButtons) {
+        btn->setState(state);
     }
 }
 

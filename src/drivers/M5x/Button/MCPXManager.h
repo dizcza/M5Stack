@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <vector>
 #include <Wire.h>
-#include "drivers/SRS/MCP23017/MCP23017.h"
+#include "drivers/MCP23017/MCP23017.h"
 #include "Button.h"
 
 
@@ -36,11 +36,12 @@ class MCPXManager {
         void enableGPS(bool enable);                  // reset GPS
         void wakeUpGPS();                  // toggle GPS EXTI pin
 
+        void addButton(MCPBtn* btn);
         void update();
 
     protected:
         uint32_t dbTime;
-        std::vector<ExpanderButton&> userButtons;
+        std::vector<MCPBtn*> userButtons;
 
         void configurePins();
         ButtonDebounceState read();
