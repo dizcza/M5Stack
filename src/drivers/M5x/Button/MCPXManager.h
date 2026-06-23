@@ -36,22 +36,12 @@ class MCPXManager {
         void enableGPS(bool enable);                  // reset GPS
         void wakeUpGPS();                  // toggle GPS EXTI pin
 
-        void addButton(MCPBtn* btn);
         void update();
-        void startReadButtonsTask();
 
     protected:
-        bool taskStarted = false;
-        QueueHandle_t statesQueue;
         uint32_t dbTime;
-        std::vector<MCPBtn> privateButtons;
-        std::vector<MCPBtn*> userButtons;
+        std::vector<ExpanderButton&> userButtons;
 
         void configurePins();
-        bool stateChanged(ButtonDebounceState state);
         ButtonDebounceState read();
-        void saveLastReading();
-
-    private:
-        static void readButtonsTask(void *args);
 };

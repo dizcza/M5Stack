@@ -15,6 +15,7 @@
  *----------------------------------------------------------------------*/
 
 #include "Button.h"
+#include <Arduino.h>
 
 /*----------------------------------------------------------------------*
  * ButtonGeneral(pin, puEnable, invert, dbTime) instantiates a button object.*

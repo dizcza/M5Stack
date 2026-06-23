@@ -1,4 +1,5 @@
 #include "Button.h"
+#include <Arduino.h>
 
 
 MCPBtn::MCPBtn(uint8_t pin, uint8_t invert) : ButtonGeneral(pin, invert) {
