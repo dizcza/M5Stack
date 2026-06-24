@@ -1,30 +1,36 @@
 #ifndef _M5DISPLAY_H_
   #define _M5DISPLAY_H_
 
+  #include <vector>
   #include <Arduino.h>
-  #include <FS.h>
   #include <SPI.h>
-  #include "utility/In_eSPI.h"
-  #include "utility/Sprite.h"
 
-  typedef enum {
-    JPEG_DIV_NONE,
-    JPEG_DIV_2,
-    JPEG_DIV_4,
-    JPEG_DIV_8,
-    JPEG_DIV_MAX
-  } jpeg_div_t;
+  #include "utility/Config.h"
+  #include "utility/In_eSPI.h"
+
+  #include "drivers/M5x/Button/MCPXManager.h"
+
+  struct DisplayState {
+    uint8_t textfont, textsize, datum;
+    const GFXfont *gfxFont;
+    uint32_t textcolor, textbgcolor;
+    int32_t cursor_x, cursor_y, padX;
+  };
 
   class M5Display : public TFT_eSPI {
+    private:
+      MCPXManager* mcpx = nullptr;
     public:
+      static M5Display* instance;
       M5Display();
       void begin();
       void sleep();
       void wakeup();
       void setBrightness(uint8_t brightness);
-      void clearDisplay(uint32_t color=ILI9341_BLACK) { fillScreen(color); }
-      void clear(uint32_t color=ILI9341_BLACK) { fillScreen(color); }
+      void clearDisplay(uint32_t color=TFT_BLACK) { fillScreen(color); }
+      void clear(uint32_t color=TFT_BLACK) { fillScreen(color); }
       void display() {}
+      void setGPIOExpander(MCPXManager* mcpx) { this->mcpx = mcpx; }
 
       inline void startWrite(void){
         #if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(ESP32_PARALLEL)
@@ -38,7 +44,7 @@
         #if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(ESP32_PARALLEL)
           if(!inTransaction) {
             if (!locked) {
-              locked = true; 
+              locked = true;
               SPI.endTransaction();
             }
           }
@@ -55,43 +61,19 @@
 
       #define setFont setFreeFont
 
-      void qrcode(const char *string, uint16_t x = 50, uint16_t y = 10, uint8_t width = 220, uint8_t version = 6);
-      void qrcode(const String &string, uint16_t x = 50, uint16_t y = 10, uint8_t width = 220, uint8_t version = 6);
 
-      void drawBmp(fs::FS &fs, const char *path, uint16_t x, uint16_t y);
-      void drawBmpFile(fs::FS &fs, const char *path, uint16_t x, uint16_t y);
+    // Saves and restores font properties, datum, cursor and colors so
+    // code can be non-invasive. Just make sure that every push is also
+    // popped when you're done to prevent stack from growing.
+    //
+    // (User code can never do this completely because the gfxFont
+    // class variable of TFT_eSPI is protected.)
+    #define M5DISPLAY_HAS_PUSH_POP
+     public:
+      void pushState();
+      void popState();
 
-      void drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t *data);
-      void drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t *data);
-      void drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, uint16_t *data);
-      void drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, uint8_t *data);
-      void drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t *data, uint16_t transparent);
-
-      void drawJpg(const uint8_t *jpg_data, size_t jpg_len, uint16_t x = 0,
-                  uint16_t y = 0, uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                  uint16_t offX = 0, uint16_t offY = 0,
-                  jpeg_div_t scale = JPEG_DIV_NONE);
-
-      void drawJpg(fs::FS &fs, const char *path, uint16_t x = 0, uint16_t y = 0,
-                    uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                    uint16_t offX = 0, uint16_t offY = 0,
-                    jpeg_div_t scale = JPEG_DIV_NONE);
-
-      void drawJpgFile(fs::FS &fs, const char *path, uint16_t x = 0, uint16_t y = 0,
-                    uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                    uint16_t offX = 0, uint16_t offY = 0,
-                    jpeg_div_t scale = JPEG_DIV_NONE);
-
-      void drawPngFile(fs::FS &fs, const char *path, uint16_t x = 0, uint16_t y = 0,
-                    uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                    uint16_t offX = 0, uint16_t offY = 0,
-                    double scale = 1.0, uint8_t alphaThreshold = 127);
-
-      void drawPngUrl(const char *url, uint16_t x = 0, uint16_t y = 0,
-                    uint16_t maxWidth = 0, uint16_t maxHeight = 0,
-                    uint16_t offX = 0, uint16_t offY = 0,
-                    double scale = 1.0, uint8_t alphaThreshold = 127);
-
-    private:
-  };
-#endif
+     private:
+      std::vector<DisplayState> _displayStateStack;
+};
+#endif /* _M5DISPLAY_H_ */

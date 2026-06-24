@@ -1,39 +1,54 @@
-#ifndef _CONFIG_H_
-  #define _CONFIG_H_
+#ifndef M5_CONFIG_H_
+  #define M5_CONFIG_H_
 
-  // Screen
-  #define TFT_LED_PIN 32
-  #define TFT_DC_PIN 27
-  #define TFT_CS_PIN 14
-  #define TFT_MOSI_PIN 23
-  #define TFT_CLK_PIN 18
-  #define TFT_RST_PIN 33
-  #define TFT_MISO_PIN 19
+  #if defined (ARDUINO_TTGO_T1)
+    #define BUTTON_A_PIN      5
+    #define BUTTON_B_PIN      5
+    #define BUTTON_C_PIN      5
 
-  // SD card
-  #define TFCARD_CS_PIN 4
+    #define M5STACK
+    #define ILI9341_DRIVER
+    #define SPI_FREQUENCY      40000000
+    #define SPI_READ_FREQUENCY 20000000
+    #define DEFAULT_ROTATION   1
+    #define TFT_SDA_READ
 
-  // Buttons
-  #define BTN_A 0
-  #define BTN_B 1
-  #define BTN_C 2
-  #define BUTTON_A 0
-  #define BUTTON_B 1
-  #define BUTTON_C 2
-  #define BUTTON_A_PIN 39
-  #define BUTTON_B_PIN 38
-  #define BUTTON_C_PIN 37
+    #define TFT_CS            27
+    #undef TFT_RST
+    #define TFT_DC            26
+    #define TFT_MOSI          15
+    #define TFT_SCLK          14
+    #undef TFT_BL
+    #define TFT_MISO          2
 
-  // BEEP PIN
-  #define SPEAKER_PIN 25
-  #define TONE_PIN_CHANNEL 0
+    #undef BTN_BL
 
-  // LORA
-  #define LORA_CS_PIN   5
-  #define LORA_RST_PIN  26
-  #define LORA_IRQ_PIN  36
+    #define SD_ENABLE          1
+    #define TFCARD_CS_PIN      13
+    #define TFCARD_MISO_PIN    TFT_MISO
+    #define TFCARD_MOSI_PIN    TFT_MOSI
+    #define TFCARD_SCLK_PIN    TFT_SCLK
 
-  // UART
-  #define USE_SERIAL Serial
+    //SX1276 - RadioHead names
+    #define RADIO_RST         -1
+    #define RADIO_NSS         25
+    #define RADIO_INT         12
+    #define RADIO_SCK         TFT_SCLK
+    #define RADIO_MISO        TFT_MISO
+    #define RADIO_MOSI        TFT_MOSI
 
-#endif /* SETTINGS_C */
+    #undef PIN_VBAT_TEST
+    #undef CHAN_VBAT_ADC
+
+  #endif
+
+  #define ILI9341_SLPIN   0x10
+  #define ILI9341_SLPOUT  0x11
+  #define ILI9341_DISPOFF 0x28
+  #define ILI9341_DISPON  0x29
+  #define TFT_SLPIN       0x10
+  #define TFT_SLPOUT      0x11
+  #define TFT_DISPOFF     0x28
+  #define TFT_DISPON      0x29
+
+#endif /* M5_CONFIG_H_ */
